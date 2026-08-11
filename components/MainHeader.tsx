@@ -14,6 +14,7 @@ import {
   Truck,
   Wrench,
   X,
+  Zap,
 } from "lucide-react";
 
 export function MainHeader() {
@@ -38,6 +39,12 @@ export function MainHeader() {
   }, [isOpen]);
 
   const navLinks = [
+    {
+      name: "Pricing & Plans",
+      href: "/pricing",
+      icon: Zap,
+      desc: "Flexible per-vehicle plans & free starter tier",
+    },
     {
       name: "DVIR Inspections",
       href: "/dashboard/dvir",
@@ -88,10 +95,14 @@ export function MainHeader() {
             </div>
           </Link>
 
-
-
           {/* Desktop Action Buttons */}
-          <div className="hidden items-center gap-3 md:flex">
+          <div className="hidden items-center gap-5 md:flex">
+            <Link
+              href="/pricing"
+              className="text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors"
+            >
+              Pricing
+            </Link>
             <Link
               href="/signin"
               className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-xs transition-all hover:border-slate-400 hover:bg-slate-50 hover:text-slate-900"
@@ -118,7 +129,7 @@ export function MainHeader() {
             <button
               type="button"
               onClick={() => setIsOpen(true)}
-              className="inline-flex size-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-xs transition-colors hover:bg-slate-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="inline-flex size-10 items-center justify-center rounded-lg bg-transparent text-slate-700 hover:text-slate-950 focus:outline-none transition-colors p-0"
               aria-label="Open main menu"
               aria-expanded={isOpen}
               aria-controls="mobile-drawer"
@@ -167,7 +178,7 @@ export function MainHeader() {
           <button
             type="button"
             onClick={() => setIsOpen(false)}
-            className="grid size-9 place-items-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+            className="grid size-9 place-items-center rounded-lg bg-transparent text-slate-500 hover:text-slate-950 focus:outline-none transition-colors p-0"
             aria-label="Close navigation menu"
           >
             <X size={20} />

@@ -24,7 +24,7 @@ export async function sendVerificationEmail({ to, name, token }: SendVerificatio
     return { success: false, reason: "MISSING_API_KEY" };
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://pradofleet.com";
   const verificationUrl = `${appUrl}/api/auth/verify-email?token=${encodeURIComponent(token)}`;
   const firstName = name.split(" ")[0] || name;
 
@@ -139,7 +139,7 @@ export async function sendWelcomeEmail({ to, name }: SendWelcomeEmailOptions) {
     return { success: false, reason: "MISSING_API_KEY" };
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://pradofleet.com";
   const firstName = name.split(" ")[0] || name;
 
   const htmlContent = `

@@ -13,6 +13,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { MainHeader } from "@/components/MainHeader";
+import { FeatureCarousel } from "@/components/FeatureCarousel";
 
 export default function LandingPage() {
   return (
@@ -36,16 +37,16 @@ export default function LandingPage() {
                 Prado Fleet centralizes live telematics, digital DVIR checklists, diagnostic fault escalation, and service workflows so field crews stay compliant and productive.
               </p>
 
-              <div className="flex flex-wrap items-center gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2 w-full">
                 <Link
                   href="/signup"
-                  className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-6 py-3.5 text-sm font-bold text-slate-950 shadow-md shadow-amber-200/90 transition-all hover:bg-amber-500 hover:shadow-amber-300"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-amber-400 px-6 py-3.5 text-sm font-bold text-slate-950 shadow-md shadow-amber-200/90 transition-all hover:bg-amber-500 hover:shadow-amber-300"
                 >
                   Start free <ArrowRight size={18} />
                 </Link>
                 <Link
                   href="/signin"
-                  className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 shadow-2xs transition-all hover:border-slate-400 hover:bg-slate-50"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 shadow-2xs transition-all hover:border-slate-400 hover:bg-slate-50"
                 >
                   <BarChart3 size={18} className="text-slate-500" />
                   Access Dashboard
@@ -65,12 +66,12 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Hero Commercial Trucks Image */}
+            {/* Hero Commercial Service Vans Image */}
             <div className="w-full md:w-2/5">
               <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 shadow-2xl transition-transform hover:scale-[1.01]">
                 <Image
-                  src="/fleet-trucks-hero.png"
-                  alt="Prado Commercial Fleet Semi Trucks"
+                  src="/service-vans-hero.png"
+                  alt="Prado Commercial Service Vans & Utility Trucks Fleet"
                   width={800}
                   height={550}
                   priority
@@ -78,102 +79,17 @@ export default function LandingPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent p-5 flex flex-col justify-end">
                   <span className="inline-flex items-center gap-2 rounded-full bg-amber-400/95 px-3 py-1 text-xs font-bold text-slate-950 w-fit backdrop-blur-md shadow-sm">
-                    <Truck size={14} /> Commercial Fleet Ready
+                    <Truck size={14} /> Service Fleet Ready
                   </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Live Operations Showcase Section */}
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
-              <div className="space-y-4 md:w-1/2">
-                <div className="flex items-center gap-2">
-                  <span className="size-2.5 rounded-full bg-emerald-500 animate-ping" />
-                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-600">
-                    Real-Time Telematics &amp; Status
-                  </span>
-                </div>
-                <h2 className="text-2xl font-bold text-slate-950 sm:text-3xl">
-                  Live Fleet Control Center
-                </h2>
-                <p className="text-xs leading-relaxed text-slate-600 sm:text-sm">
-                  Track active vehicle positions, driver DVIR inspection submissions, and automated diagnostic fault alerts in real time as your crews operate in the field.
-                </p>
-                <div className="pt-2">
-                  <a
-                    href="/signup"
-                    className="inline-flex items-center gap-2 text-xs font-bold text-amber-600 hover:text-amber-700 transition-colors"
-                  >
-                    Explore live monitoring features <ArrowRight size={14} />
-                  </a>
-                </div>
-              </div>
-
-              {/* LIVE FLEET STATUS CARD */}
-              <div className="w-full md:w-1/2">
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
-                  <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-                    <div className="flex items-center gap-2.5">
-                      <span className="size-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="text-xs font-mono font-semibold uppercase tracking-wider text-emerald-600">
-                        Live Fleet Status
-                      </span>
-                    </div>
-                    <span className="text-[10px] text-slate-400">Real-time sync</span>
-                  </div>
-
-                  <div className="mt-4 space-y-3">
-                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3 shadow-2xs">
-                      <div className="flex items-center gap-3">
-                        <div className="rounded-lg bg-amber-100 p-2 text-amber-700">
-                          <Truck size={18} />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-slate-900">Unit #104 — Freightliner M2</p>
-                          <p className="text-[10px] text-slate-500">Route 9 — En Route to Site B</p>
-                        </div>
-                      </div>
-                      <span className="rounded-md bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
-                        Active
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3 shadow-2xs">
-                      <div className="flex items-center gap-3">
-                        <div className="rounded-lg bg-blue-100 p-2 text-blue-700">
-                          <ClipboardCheck size={18} />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-slate-900">Pre-Trip DVIR Inspection</p>
-                          <p className="text-[10px] text-slate-500">Passed by Alex Rivera (Driver)</p>
-                        </div>
-                      </div>
-                      <span className="rounded-md bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700">
-                        Passed
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3 shadow-2xs">
-                      <div className="flex items-center gap-3">
-                        <div className="rounded-lg bg-amber-100 p-2 text-amber-700">
-                          <Wrench size={18} />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-slate-900">Brake Pad Diagnostics</p>
-                          <p className="text-[10px] text-slate-500">Automated Work Order Generated</p>
-                        </div>
-                      </div>
-                      <span className="rounded-md bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
-                        Service
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Full-Width Feature Showcase Carousel Section */}
+          <section className="w-full">
+            <FeatureCarousel />
+          </section>
           
 
           {/* Features Grid Section */}
@@ -266,20 +182,50 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
+
+          {/* Standalone Start Free CTA Section */}
+          <section className="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm text-slate-950 sm:p-10">
+            <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+              <div className="space-y-2 max-w-xl">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-200 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-900">
+                  <Sparkles size={13} className="text-amber-600" /> Get Started Today
+                </span>
+                <h2 className="text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">
+                  Ready to streamline your fleet operations?
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  Set up your workspace in minutes with mobile-first DVIR compliance, live telematics, and automated work orders. No credit card required.
+                </p>
+              </div>
+
+              <div className="w-full md:w-auto shrink-0">
+                <Link
+                  href="/signup"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-amber-400 px-7 py-4 text-sm font-bold text-slate-950 shadow-md shadow-amber-200/90 transition-all hover:bg-amber-500 active:scale-98"
+                >
+                  Start free <ArrowRight size={18} />
+                </Link>
+              </div>
+            </div>
+          </section>
         </section>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-white py-8 text-center text-xs text-slate-500">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6">
-          <div className="flex items-center gap-2">
-            <div className="rounded-md bg-amber-400 p-1 text-slate-950">
-              <Truck size={14} />
-            </div>
-            <span className="font-bold text-slate-800">Prado Fleet</span>
-            <span>— Fleet Operations & Telematics</span>
-          </div>
+      <footer className="border-t border-slate-200 bg-white py-6 text-xs text-slate-500">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© {new Date().getFullYear()} Prado Systems. All rights reserved.</p>
+          <div className="flex items-center gap-6">
+            <Link href="/pricing" className="font-medium text-slate-600 hover:text-slate-900 transition-colors">
+              Pricing
+            </Link>
+            <Link href="/privacy" className="font-medium text-slate-600 hover:text-slate-900 transition-colors">
+              Privacy
+            </Link>
+            <Link href="/terms" className="font-medium text-slate-600 hover:text-slate-900 transition-colors">
+              Terms
+            </Link>
+          </div>
         </div>
       </footer>
     </div>

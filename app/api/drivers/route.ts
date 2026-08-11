@@ -109,7 +109,7 @@ export async function POST(request: Request) {
 
     // Send invitation email via Resend if configured
     const apiKey = process.env.RESEND_API_KEY;
-    const origin = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const origin = process.env.NEXT_PUBLIC_APP_URL || "https://pradofleet.com";
     const inviteUrl = `${origin}/accept-invite?token=${inviteToken}`;
 
     if (apiKey) {
