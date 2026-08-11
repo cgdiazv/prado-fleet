@@ -12,12 +12,11 @@ if (!connectionString) {
   throw new Error("Missing DATABASE_URL or DIRECT_URL for Prisma.");
 }
 
-const normalizedConnectionString = connectionString.includes("sslmode=")
-  ? connectionString
-  : `${connectionString}${connectionString.includes("?") ? "&" : "?"}sslmode=require`;
+const databaseUrl = new URL(connectionString);
+databaseUrl.searchParams.delete("sslmode");
 
 const pool = new pg.Pool({
-  connectionString: normalizedConnectionString,
+  connectionString: databaseUrl.toString(),
   ssl: { rejectUnauthorized: false },
 });
 const adapter = new PrismaPg(pool);

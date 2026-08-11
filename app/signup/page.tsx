@@ -2,7 +2,12 @@ import Link from "next/link";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 
 type SignUpPageProps = {
-  searchParams?: Promise<{ from?: string }>;
+  searchParams?: Promise<{ error?: string; from?: string }>;
+};
+
+const errorMessages: Record<string, string> = {
+  exists: "An account with that email already exists.",
+  invalid: "Enter a valid name, email, and password of at least 8 characters.",
 };
 
 function getSafeRedirect(target?: string) {
@@ -21,13 +26,18 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
     <main className="flex min-h-screen items-center justify-center bg-[#f7f7f3] px-4">
       <div className="w-full max-w-md space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm shadow-slate-200/60">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-amber-600">Prado Fleet</p>
+          <p className="font-sans text-xl font-bold tracking-normal text-slate-900">Prado Fleet</p>
           <h1 className="mt-1 text-2xl font-semibold text-slate-900">Create account</h1>
           <p className="mt-1 text-sm text-slate-600">Set up access for your fleet operations workspace.</p>
         </div>
 
         <form method="post" action="/api/auth/signup" className="space-y-4">
           <input type="hidden" name="redirectTo" value={redirectTo} />
+          {params.error && errorMessages[params.error] && (
+            <p role="alert" className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {errorMessages[params.error]}
+            </p>
+          )}
           <div>
             <label htmlFor="name" className="mb-1 block text-xs font-medium text-slate-500">Full name</label>
             <input
@@ -35,6 +45,9 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
               name="name"
               type="text"
               required
+              minLength={2}
+              maxLength={100}
+              autoComplete="name"
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-amber-400"
               placeholder="Alex Rivera"
             />
@@ -46,6 +59,7 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
               name="email"
               type="email"
               required
+              autoComplete="email"
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-amber-400"
               placeholder="ops@company.com"
             />

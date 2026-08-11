@@ -2,7 +2,7 @@ import Link from "next/link";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 
 type SignInPageProps = {
-  searchParams?: Promise<{ from?: string }>;
+  searchParams?: Promise<{ error?: string; from?: string }>;
 };
 
 function getSafeRedirect(target?: string) {
@@ -21,13 +21,18 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
     <main className="flex min-h-screen items-center justify-center bg-[#f7f7f3] px-4">
       <div className="w-full max-w-md space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm shadow-slate-200/60">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-amber-600">Prado Fleet</p>
+          <p className="font-sans text-xl font-bold tracking-normal text-slate-900">Prado Fleet</p>
           <h1 className="mt-1 text-2xl font-semibold text-slate-900">Sign in</h1>
           <p className="mt-1 text-sm text-slate-600">Continue to your fleet operations dashboard.</p>
         </div>
 
         <form method="post" action="/api/auth/signin" className="space-y-4">
           <input type="hidden" name="redirectTo" value={redirectTo} />
+          {params.error === "credentials" && (
+            <p role="alert" className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              Email or password is incorrect.
+            </p>
+          )}
           <div>
             <label htmlFor="email" className="mb-1 block text-xs font-medium text-slate-500">Email</label>
             <input
@@ -35,6 +40,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
               name="email"
               type="email"
               required
+              autoComplete="email"
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-amber-400"
               placeholder="you@company.com"
             />
