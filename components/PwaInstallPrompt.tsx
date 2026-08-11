@@ -99,7 +99,7 @@ export function PwaInstallPrompt() {
         <div className="mt-3 rounded-xl bg-slate-900 border border-slate-800 p-2.5 text-[11px] text-amber-300 flex items-center gap-2">
           <Share size={16} className="text-amber-400 shrink-0" />
           <span>
-            Tap <strong>Share</strong> in Safari, then select <strong>&quot;Add to Home Screen&quot;</strong>.
+            Tap <strong>Share</strong> and select <strong>&quot;Add to Home Screen&quot;</strong> to install app.
           </span>
         </div>
       ) : (
