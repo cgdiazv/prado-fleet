@@ -70,7 +70,26 @@ export default function DriverPortalPage() {
   const [fuelCost, setFuelCost] = useState("");
   const [fuelMessage, setFuelMessage] = useState<string | null>(null);
 
+  const [geoPermission, setGeoPermission] = useState<"granted" | "prompt" | "denied" | "unknown">("unknown");
+
   const watchIdRef = useRef<number | null>(null);
+
+  // Check Geolocation Permission state on portal load
+  useEffect(() => {
+    if (typeof window !== "undefined" && "permissions" in navigator) {
+      navigator.permissions
+        .query({ name: "geolocation" as PermissionName })
+        .then((result) => {
+          setGeoPermission(result.state as "granted" | "prompt" | "denied");
+          result.onchange = () => {
+            setGeoPermission(result.state as "granted" | "prompt" | "denied");
+          };
+        })
+        .catch(() => {
+          setGeoPermission("prompt");
+        });
+    }
+  }, []);
 
   // Fetch Drivers and Vehicles from API
   useEffect(() => {
@@ -168,29 +187,41 @@ export default function DriverPortalPage() {
     }
 
     setGpsError(null);
-    setIsBroadcasting(true);
 
-    const watchId = navigator.geolocation.watchPosition(
+    // Request initial position to trigger browser location permission dialog if not yet granted
+    navigator.geolocation.getCurrentPosition(
       (position) => {
+        setGeoPermission("granted");
+        setIsBroadcasting(true);
         sendLocationPing(position);
+
+        // Start continuous background watch
+        const watchId = navigator.geolocation.watchPosition(
+          (pos) => sendLocationPing(pos),
+          (err) => {
+            console.error("[Geolocation Error]:", err);
+            setGpsError(
+              err.code === err.PERMISSION_DENIED
+                ? "Location permission denied. Please allow GPS location access in browser settings."
+                : "Unable to retrieve GPS signal."
+            );
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+        watchIdRef.current = watchId;
       },
       (error) => {
-        console.error("[Geolocation Error]:", error);
+        console.error("[Initial Location Error]:", error);
+        setGeoPermission(error.code === error.PERMISSION_DENIED ? "denied" : "prompt");
         setGpsError(
           error.code === error.PERMISSION_DENIED
-            ? "Location permission denied. Please allow GPS location access in browser settings."
-            : "Unable to retrieve GPS signal."
+            ? "Location permission denied. Please allow GPS location access in your browser settings to enable shift tracking."
+            : "Could not retrieve GPS position. Please ensure Location Services are enabled on your phone."
         );
         setIsBroadcasting(false);
       },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0,
-      }
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
-
-    watchIdRef.current = watchId;
   };
 
   const endShift = () => {
@@ -330,6 +361,31 @@ export default function DriverPortalPage() {
           </button>
         </div>
       </div>
+
+      {/* GPS Location Sharing Permission Notice Banner */}
+      {geoPermission !== "granted" && !isBroadcasting && (
+        <div className="rounded-3xl border border-amber-300 bg-amber-50 p-5 shadow-sm space-y-3">
+          <div className="flex items-start gap-3">
+            <div className="rounded-2xl bg-amber-400 p-2.5 text-slate-950 shrink-0 shadow-xs">
+              <MapPin size={20} />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-sm font-bold text-slate-950">GPS Location Sharing Required</h3>
+              <p className="text-xs text-slate-700 leading-relaxed">
+                Prado Fleet needs location access during your shift to stream vehicle route telematics to your fleet manager.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={startShift}
+            className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-950 px-4 py-3 text-xs font-bold text-white hover:bg-slate-800 transition-colors shadow-sm active:scale-98"
+          >
+            <Navigation size={15} className="text-amber-400" />
+            Enable GPS Location &amp; Start Shift
+          </button>
+        </div>
+      )}
 
       {gpsError && (
         <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-xs font-medium text-rose-800">
