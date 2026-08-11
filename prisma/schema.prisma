@@ -11,13 +11,22 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(uuid()) @db.Uuid
-  name         String
-  email        String    @unique
-  passwordHash String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  sessions     Session[]
+  id                       String    @id @default(uuid()) @db.Uuid
+  name                     String
+  email                    String    @unique
+  passwordHash             String
+  role                     UserRole  @default(MANAGER)
+  emailVerified            DateTime?
+  emailVerificationToken   String?   @unique
+  emailVerificationExpires DateTime?
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+  sessions                 Session[]
+}
+
+enum UserRole {
+  DRIVER
+  MANAGER
 }
 
 model Session {
@@ -30,4 +39,143 @@ model Session {
 
   @@index([userId])
   @@index([expiresAt])
+}
+
+enum DriverRole {
+  COMMERCIAL_DRIVER
+  FLEET_MANAGER
+  LEAD_TECHNICIAN
+  DISPATCHER
+}
+
+enum DutyStatus {
+  ON_DUTY
+  ON_ROUTE
+  OFF_DUTY
+}
+
+model Driver {
+  id            String            @id @default(uuid()) @db.Uuid
+  name          String
+  email         String            @unique
+  phone         String?
+  role          DriverRole        @default(COMMERCIAL_DRIVER)
+  licenseNo     String?
+  cdlExpiration String?
+  status        DutyStatus        @default(OFF_DUTY)
+  inviteToken   String?           @unique
+  inviteExpires DateTime?
+  inviteAccepted DateTime?
+  vehicles      Vehicle[]
+  inspections   DvirInspection[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+}
+
+enum VehicleStatus {
+  ACTIVE
+  MAINTENANCE
+  OUT_OF_SERVICE
+}
+
+enum TelematicsStatus {
+  MOVING
+  IDLE
+  ALERT
+}
+
+model Vehicle {
+  id               String             @id @default(uuid()) @db.Uuid
+  name             String
+  vin              String?            @unique
+  make             String?
+  model            String?
+  year             Int?
+  licensePlate     String?
+  status           VehicleStatus      @default(ACTIVE)
+  telematicsStatus TelematicsStatus   @default(IDLE)
+  currentSpeed     Float              @default(0)
+  destination      String?
+  lat              Float?
+  lng              Float?
+  assignedDriverId String?            @db.Uuid
+  assignedDriver   Driver?            @relation(fields: [assignedDriverId], references: [id], onDelete: SetNull)
+  inspections      DvirInspection[]
+  workOrders       MaintenanceOrder[]
+  assets           Asset[]
+  fuelLogs         FuelLog[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+}
+
+enum InspectionType {
+  PRE_TRIP
+  POST_TRIP
+}
+
+model DvirInspection {
+  id             String         @id @default(uuid()) @db.Uuid
+  inspectionType InspectionType @default(PRE_TRIP)
+  vehicleId      String         @db.Uuid
+  vehicle        Vehicle        @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  driverId       String?        @db.Uuid
+  driver         Driver?        @relation(fields: [driverId], references: [id], onDelete: SetNull)
+  driverName     String
+  odometer       Int
+  passed         Boolean        @default(true)
+  status         String         @default("PASSED")
+  defects        String[]
+  notes          String?
+  signature      String?
+  createdAt      DateTime       @default(now())
+}
+
+enum PriorityLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum WorkOrderStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+}
+
+model MaintenanceOrder {
+  id          String          @id @default(uuid()) @db.Uuid
+  vehicleId   String          @db.Uuid
+  vehicle     Vehicle         @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  priority    PriorityLevel   @default(MEDIUM)
+  status      WorkOrderStatus @default(OPEN)
+  assignedTo  String?
+  cost        Float?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model Asset {
+  id                String   @id @default(uuid()) @db.Uuid
+  name              String
+  category          String
+  serialNumber      String?
+  assignedVehicleId String?  @db.Uuid
+  assignedVehicle   Vehicle? @relation(fields: [assignedVehicleId], references: [id], onDelete: SetNull)
+  jobLocation       String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model FuelLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  vehicleId  String   @db.Uuid
+  vehicle    Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  driverName String
+  gallons    Float
+  totalCost  Float
+  odometer   Int
+  loggedAt   DateTime @default(now())
 }

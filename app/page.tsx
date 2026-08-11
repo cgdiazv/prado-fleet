@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -53,74 +54,121 @@ export default function LandingPage() {
 
               <div className="flex flex-wrap items-center gap-6 text-xs text-slate-500 pt-2 border-t border-slate-200/60">
                 <span className="flex items-center gap-1.5 font-medium">
-                  <CheckCircle2 size={15} className="text-emerald-500" /> No credit card required
+                  <CheckCircle2 size={15} className="text-amber-500" /> No credit card required
                 </span>
                 <span className="flex items-center gap-1.5 font-medium">
-                  <CheckCircle2 size={15} className="text-emerald-500" /> Instant mobile DVIR setup
+                  <CheckCircle2 size={15} className="text-amber-500" /> Instant mobile DVIR setup
                 </span>
                 <span className="flex items-center gap-1.5 font-medium">
-                  <CheckCircle2 size={15} className="text-emerald-500" /> DOT & OSHA ready
+                  <CheckCircle2 size={15} className="text-amber-500" /> DOT & OSHA ready
                 </span>
               </div>
             </div>
 
-            {/* Hero Quick Preview Card */}
+            {/* Hero Commercial Trucks Image */}
             <div className="w-full md:w-2/5">
-              <div className="rounded-2xl border border-slate-200 bg-slate-900 p-5 text-white shadow-2xl">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                  <div className="flex items-center gap-2.5">
-                    <span className="size-2.5 rounded-full bg-emerald-400 animate-ping" />
-                    <span className="text-xs font-mono font-semibold uppercase tracking-wider text-emerald-400">
-                      Live Fleet Status
-                    </span>
-                  </div>
-                  <span className="text-[10px] text-slate-400">Real-time sync</span>
+              <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 shadow-2xl transition-transform hover:scale-[1.01]">
+                <Image
+                  src="/fleet-trucks-hero.png"
+                  alt="Prado Commercial Fleet Semi Trucks"
+                  width={800}
+                  height={550}
+                  priority
+                  className="h-64 sm:h-80 w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent p-5 flex flex-col justify-end">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-amber-400/95 px-3 py-1 text-xs font-bold text-slate-950 w-fit backdrop-blur-md shadow-sm">
+                    <Truck size={14} /> Commercial Fleet Ready
+                  </span>
                 </div>
+              </div>
+            </div>
+          </div>
 
-                <div className="mt-4 space-y-3">
-                  <div className="flex items-center justify-between rounded-xl bg-slate-800/80 p-3">
-                    <div className="flex items-center gap-3">
-                      <div className="rounded-lg bg-amber-400/20 p-2 text-amber-400">
-                        <Truck size={18} />
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-slate-100">Unit #104 — Freightliner M2</p>
-                        <p className="text-[10px] text-slate-400">Route 9 — En Route to Site B</p>
-                      </div>
+          {/* Live Operations Showcase Section (Moved down under Hero) */}
+          <div className="rounded-3xl border border-slate-900 bg-slate-950 p-6 text-white shadow-2xl sm:p-8">
+            <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
+              <div className="space-y-4 md:w-1/2">
+                <div className="flex items-center gap-2">
+                  <span className="size-2.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">
+                    Real-Time Telematics & Status
+                  </span>
+                </div>
+                <h2 className="text-2xl font-bold text-white sm:text-3xl">
+                  Live Fleet Control Center
+                </h2>
+                <p className="text-xs leading-relaxed text-slate-300 sm:text-sm">
+                  Track active vehicle positions, driver DVIR inspection submissions, and automated diagnostic fault alerts in real time as your crews operate in the field.
+                </p>
+                <div className="pt-2">
+                  <Link
+                    href="/signup"
+                    className="inline-flex items-center gap-2 text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors"
+                  >
+                    Explore live monitoring features <ArrowRight size={14} />
+                  </Link>
+                </div>
+              </div>
+
+              {/* LIVE FLEET STATUS CARD */}
+              <div className="w-full md:w-1/2">
+                <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-2xl">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <span className="size-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="text-xs font-mono font-semibold uppercase tracking-wider text-emerald-400">
+                        Live Fleet Status
+                      </span>
                     </div>
-                    <span className="rounded-md bg-emerald-500/20 px-2 py-0.5 text-[10px] font-medium text-emerald-300">
-                      Active
-                    </span>
+                    <span className="text-[10px] text-slate-400">Real-time sync</span>
                   </div>
 
-                  <div className="flex items-center justify-between rounded-xl bg-slate-800/80 p-3">
-                    <div className="flex items-center gap-3">
-                      <div className="rounded-lg bg-blue-400/20 p-2 text-blue-400">
-                        <ClipboardCheck size={18} />
+                  <div className="mt-4 space-y-3">
+                    <div className="flex items-center justify-between rounded-xl bg-slate-800/80 p-3">
+                      <div className="flex items-center gap-3">
+                        <div className="rounded-lg bg-amber-400/20 p-2 text-amber-400">
+                          <Truck size={18} />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-100">Unit #104 — Freightliner M2</p>
+                          <p className="text-[10px] text-slate-400">Route 9 — En Route to Site B</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-xs font-bold text-slate-100">Pre-Trip DVIR Inspection</p>
-                        <p className="text-[10px] text-slate-400">Passed by Alex Rivera (Driver)</p>
-                      </div>
+                      <span className="rounded-md bg-emerald-500/20 px-2 py-0.5 text-[10px] font-medium text-emerald-300">
+                        Active
+                      </span>
                     </div>
-                    <span className="rounded-md bg-blue-500/20 px-2 py-0.5 text-[10px] font-medium text-blue-300">
-                      Passed
-                    </span>
-                  </div>
 
-                  <div className="flex items-center justify-between rounded-xl bg-slate-800/80 p-3">
-                    <div className="flex items-center gap-3">
-                      <div className="rounded-lg bg-amber-500/20 p-2 text-amber-400">
-                        <Wrench size={18} />
+                    <div className="flex items-center justify-between rounded-xl bg-slate-800/80 p-3">
+                      <div className="flex items-center gap-3">
+                        <div className="rounded-lg bg-blue-400/20 p-2 text-blue-400">
+                          <ClipboardCheck size={18} />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-100">Pre-Trip DVIR Inspection</p>
+                          <p className="text-[10px] text-slate-400">Passed by Alex Rivera (Driver)</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-xs font-bold text-slate-100">Brake Pad Diagnostics</p>
-                        <p className="text-[10px] text-slate-400">Automated Work Order Generated</p>
-                      </div>
+                      <span className="rounded-md bg-blue-500/20 px-2 py-0.5 text-[10px] font-medium text-blue-300">
+                        Passed
+                      </span>
                     </div>
-                    <span className="rounded-md bg-amber-500/20 px-2 py-0.5 text-[10px] font-medium text-amber-300">
-                      Service
-                    </span>
+
+                    <div className="flex items-center justify-between rounded-xl bg-slate-800/80 p-3">
+                      <div className="flex items-center gap-3">
+                        <div className="rounded-lg bg-amber-500/20 p-2 text-amber-400">
+                          <Wrench size={18} />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-100">Brake Pad Diagnostics</p>
+                          <p className="text-[10px] text-slate-400">Automated Work Order Generated</p>
+                        </div>
+                      </div>
+                      <span className="rounded-md bg-amber-500/20 px-2 py-0.5 text-[10px] font-medium text-amber-300">
+                        Service
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>

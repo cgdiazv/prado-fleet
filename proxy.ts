@@ -1,39 +1,31 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-const LEGACY_DASHBOARD_PATHS = new Set([
-  "/tracking",
-  "/dvir",
-  "/maintenance",
-  "/assets",
-  "/fuel",
-  "/settings",
-]);
+const SESSION_COOKIE_NAME = "prado_fleet_session";
 
+// Proxy: fast cookie check + forward pathname as a custom header so
+// the layout server component can do role-based redirects server-side.
 export function proxy(request: NextRequest) {
-  const { pathname, search } = request.nextUrl;
-  const hasSession = Boolean(request.cookies.get("prado_fleet_session")?.value);
+  const { pathname } = request.nextUrl;
 
-  if (LEGACY_DASHBOARD_PATHS.has(pathname)) {
-    return NextResponse.redirect(new URL(`/dashboard${pathname}${search}`, request.url));
-  }
-
+  // Redirect unauthenticated users to sign-in
   if (pathname.startsWith("/dashboard")) {
-    if (!hasSession) {
+    const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
+    if (!token) {
       const signinUrl = new URL("/signin", request.url);
-      signinUrl.searchParams.set("from", `${pathname}${search}`);
+      signinUrl.searchParams.set("from", pathname);
       return NextResponse.redirect(signinUrl);
     }
-    return NextResponse.next();
   }
 
-  if (hasSession && (pathname === "/signin" || pathname === "/signup")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
+  // Forward the pathname so layout server components can access it
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", pathname);
 
-  return NextResponse.next();
+  return NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/dashboard/:path*"],
 };

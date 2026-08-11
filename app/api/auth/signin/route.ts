@@ -23,11 +23,22 @@ export async function POST(request: Request) {
 
   const user = await prisma.user.findUnique({
     where: { email },
-    select: { id: true, passwordHash: true },
+    select: { id: true, passwordHash: true, emailVerified: true },
   });
 
   if (!user || !(await verifyPassword(password, user.passwordHash))) {
     return signinError(request, redirectTo);
+  }
+
+  // Option 1: Block sign-in if email has not been verified yet
+  if (!user.emailVerified) {
+    const unverifiedUrl = new URL("/signin", request.url);
+    unverifiedUrl.searchParams.set("error", "unverified");
+    unverifiedUrl.searchParams.set("email", email);
+    if (redirectTo !== "/dashboard") {
+      unverifiedUrl.searchParams.set("from", redirectTo);
+    }
+    return NextResponse.redirect(unverifiedUrl, { status: 303 });
   }
 
   const session = createSession();

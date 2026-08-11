@@ -1,22 +1,26 @@
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 import { hashSessionToken, SESSION_COOKIE_NAME } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
-export async function POST(request: NextRequest) {
-  const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
-  if (token) {
-    await prisma.session.deleteMany({ where: { tokenHash: hashSessionToken(token) } });
+export async function POST() {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+
+    if (token) {
+      const tokenHash = hashSessionToken(token);
+      await prisma.session.deleteMany({
+        where: { tokenHash },
+      });
+    }
+
+    cookieStore.delete(SESSION_COOKIE_NAME);
+    return NextResponse.json({ success: true, redirectUrl: "/signin" });
+  } catch (error) {
+    console.error("[Signout error]:", error);
+    const cookieStore = await cookies();
+    cookieStore.delete(SESSION_COOKIE_NAME);
+    return NextResponse.json({ success: true, redirectUrl: "/signin" });
   }
-
-  const response = NextResponse.redirect(new URL("/signin", request.url), { status: 303 });
-  response.cookies.set(SESSION_COOKIE_NAME, "", {
-    httpOnly: true,
-    path: "/",
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 0,
-  });
-
-  return response;
 }

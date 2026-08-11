@@ -8,6 +8,7 @@ type SignUpPageProps = {
 const errorMessages: Record<string, string> = {
   exists: "An account with that email already exists.",
   invalid: "Enter a valid name, email, and password of at least 8 characters.",
+  password_mismatch: "Passwords do not match. Please check and try again.",
 };
 
 function getSafeRedirect(target?: string) {
@@ -26,7 +27,12 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
     <main className="flex min-h-screen items-center justify-center bg-[#f7f7f3] px-4">
       <div className="w-full max-w-md space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm shadow-slate-200/60">
         <div>
-          <p className="font-sans text-xl font-bold tracking-normal text-slate-900">Prado Fleet</p>
+          <Link
+            href="/"
+            className="inline-block font-sans text-xl font-bold tracking-tight text-slate-900 transition-colors hover:text-amber-600"
+          >
+            Prado Fleet
+          </Link>
           <h1 className="mt-1 text-2xl font-semibold text-slate-900">Create account</h1>
           <p className="mt-1 text-sm text-slate-600">Set up access for your fleet operations workspace.</p>
         </div>
@@ -69,6 +75,12 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
             name="password"
             label="Password"
             placeholder="Create a password"
+          />
+          <PasswordInput
+            id="confirmPassword"
+            name="confirmPassword"
+            label="Confirm password"
+            placeholder="Re-enter your password"
           />
           <button
             type="submit"

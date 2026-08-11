@@ -43,3 +43,7 @@ export function safeRedirectPath(pathname: string | null) {
 export function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
 }
+
+export function generateVerificationToken() {
+  return randomBytes(32).toString("hex");
+}

@@ -1,71 +1,102 @@
 import { NextResponse } from "next/server";
-import { buildCommerceOrderFromDvir, createCommerceOrder } from "@/services/prado-commerce";
-import { appendAuditEntry } from "@/services/audit-store";
+import { prisma } from "@/lib/prisma";
 
-type DvirApiPayload = {
-  id?: string;
-  vehicleId?: string;
-  driverId?: string;
-  mileage?: number;
-  inspectionType?: "pre_trip" | "post_trip";
-  flaggedItems?: string[];
-  obdCode?: string;
-  notes?: string;
-};
-
-export async function POST(request: Request) {
-  let payload: DvirApiPayload;
-
+// GET: Retrieve all DVIR inspections from Supabase
+export async function GET() {
   try {
-    payload = (await request.json()) as DvirApiPayload;
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON payload." }, { status: 400 });
+    const dvirs = await prisma.dvirInspection.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        vehicle: {
+          select: { name: true },
+        },
+      },
+    });
+
+    const formattedLogs = dvirs.map((d) => ({
+      id: d.id,
+      vehicleName: d.vehicle?.name || "Unit #01 - Ford F-150",
+      driverName: d.driverName,
+      type: d.inspectionType,
+      status: d.status || (d.passed ? "PASSED" : "DEFECTS_FOUND"),
+      odometer: d.odometer,
+      defects: d.defects || [],
+      submittedAt: new Date(d.createdAt).toLocaleString([], {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      signature: d.signature || d.driverName,
+    }));
+
+    return NextResponse.json({ logs: formattedLogs });
+  } catch (error) {
+    console.error("[GET /api/dvir error]:", error);
+    return NextResponse.json({ error: "Failed to fetch DVIR records" }, { status: 500 });
   }
+}
 
-  if (!payload.id || !payload.vehicleId || !payload.driverId || typeof payload.mileage !== "number" || !payload.inspectionType) {
-    return NextResponse.json(
-      { error: "Missing required DVIR fields: id, vehicleId, driverId, mileage, inspectionType." },
-      { status: 400 },
-    );
+// POST: Create a new DVIR inspection record from Driver Portal
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { inspectionType, vehicleName, driverName, odometer, defects, notes, signature } = body;
+
+    let vehicle = await prisma.vehicle.findFirst({
+      where: { name: vehicleName },
+    });
+
+    if (!vehicle) {
+      vehicle = await prisma.vehicle.findFirst();
+    }
+
+    if (!vehicle) {
+      vehicle = await prisma.vehicle.create({
+        data: {
+          name: vehicleName || "Unit #01 - Ford F-150",
+          status: "ACTIVE",
+        },
+      });
+    }
+
+    const hasDefects = defects && defects.length > 0;
+
+    const newDvir = await prisma.dvirInspection.create({
+      data: {
+        inspectionType: inspectionType === "POST_TRIP" ? "POST_TRIP" : "PRE_TRIP",
+        vehicleId: vehicle.id,
+        driverName: driverName || "Active Driver",
+        odometer: odometer || 48210,
+        passed: !hasDefects,
+        status: hasDefects ? "DEFECTS_FOUND" : "PASSED",
+        defects: defects || [],
+        notes: notes || "",
+        signature: signature || driverName || "Active Driver",
+      },
+    });
+
+    return NextResponse.json({ success: true, dvir: newDvir });
+  } catch (error) {
+    console.error("[POST /api/dvir error]:", error);
+    return NextResponse.json({ error: "Failed to save DVIR record" }, { status: 500 });
   }
+}
 
-  const dvirReport = {
-    id: payload.id,
-    vehicleId: payload.vehicleId,
-    driverId: payload.driverId,
-    timestamp: new Date().toISOString(),
-    type: payload.inspectionType,
-    passed: (payload.flaggedItems ?? []).length === 0,
-    flaggedItems: payload.flaggedItems ?? [],
-    autoOrderPartsTriggered: false,
-  };
+// PUT: Update DVIR status (e.g. escalate to WORK_ORDER_CREATED)
+export async function PUT(request: Request) {
+  try {
+    const body = await request.json();
+    const { id, status } = body;
 
-  const commerceOrder = buildCommerceOrderFromDvir({
-    ...dvirReport,
-    mileage: payload.mileage,
-    inspectionType: payload.inspectionType,
-    obdCode: payload.obdCode,
-    notes: payload.notes,
-  });
+    const updated = await prisma.dvirInspection.update({
+      where: { id },
+      data: { status: status || "WORK_ORDER_CREATED" },
+    });
 
-  const submission = commerceOrder.lines.length > 0
-    ? await createCommerceOrder(commerceOrder)
-    : { submitted: false, message: "No orderable parts detected.", order: commerceOrder };
-
-  const storedRecord = await appendAuditEntry("dvir-submissions", "dvir.submitted", {
-    dvir: dvirReport,
-    commerceOrder,
-    submission,
-  });
-
-  return NextResponse.json({
-    dvir: dvirReport,
-    commerceOrder,
-    submission,
-    stored: {
-      collection: "dvir-submissions",
-      id: storedRecord.id,
-      createdAt: storedRecord.createdAt,
-    },
-  });
+    return NextResponse.json({ success: true, dvir: updated });
+  } catch (error) {
+    console.error("[PUT /api/dvir error]:", error);
+    return NextResponse.json({ error: "Failed to update DVIR status" }, { status: 500 });
+  }
 }
