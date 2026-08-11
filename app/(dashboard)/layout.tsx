@@ -62,9 +62,13 @@ export default async function DashboardLayout({
   if (userRole === "DRIVER") {
     const headersList = await headers();
     const pathname = headersList.get("x-pathname") ?? "";
-    const isManagerRoute = MANAGER_ONLY_ROUTES.some(
-      (route) => pathname === route || pathname.startsWith(route + "/")
-    );
+    const isManagerRoute = MANAGER_ONLY_ROUTES.some((route) => {
+      if (route === "/dashboard") {
+        return pathname === "/dashboard";
+      }
+      return pathname === route || pathname.startsWith(route + "/");
+    });
+
     if (isManagerRoute) {
       redirect("/dashboard/driver-portal");
     }
