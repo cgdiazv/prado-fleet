@@ -22,69 +22,70 @@ export default function LandingPage() {
       <MainHeader />
 
       <main className="flex-1">
-        <section className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-12 sm:px-6 md:py-20">
-          {/* Hero Section */}
-          <div className="relative flex flex-col items-start gap-8 overflow-hidden rounded-3xl border border-amber-200/60 bg-white/70 p-6 shadow-xl shadow-amber-900/5 backdrop-blur-sm sm:p-10 md:flex-row md:items-center">
-            <div className="w-full space-y-6 md:w-3/5">
-              <p className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50/90 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-amber-800">
+        {/* Full Width Hero Section with Background Cover & Left-Vanishing Gradient */}
+        <section className="relative w-full overflow-hidden border-b border-amber-200/50 bg-[#fffdf7] py-16 md:py-24">
+          {/* Background Image Layer with Vanishing Gradient */}
+          <div className="absolute inset-0 w-full h-full">
+            <Image
+              src="/service-vans-hero.png"
+              alt="Prado Commercial Service Vans & Utility Trucks Fleet"
+              fill
+              priority
+              className="object-cover object-right md:object-right"
+            />
+            {/* Vanishing Overlay Gradient (Solid White/Cream on Left, Fades to Transparent on Right) */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#fffdf7] via-[#fffdf7]/95 via-45% to-transparent md:via-55%" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#fffdf7] via-transparent to-transparent opacity-80" />
+          </div>
+
+          {/* Boxed Content Layer */}
+          <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="max-w-2xl space-y-6">
+              <p className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50/95 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-amber-800 shadow-2xs backdrop-blur-md">
                 <Sparkles size={14} className="text-amber-600 animate-pulse" />
                 Fleet Operations Control Center
               </p>
-              <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-slate-950 sm:text-4xl md:text-5xl">
-                Run vehicles, DVIR inspections & maintenance from one platform.
+              
+              <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight text-slate-950 sm:text-5xl md:text-6xl">
+                Run vehicles, DVIR inspections &amp; maintenance from one platform.
               </h1>
-              <p className="max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
+              
+              <p className="text-base leading-relaxed text-slate-700 sm:text-lg md:text-xl font-medium">
                 Prado Fleet centralizes live telematics, digital DVIR checklists, diagnostic fault escalation, and service workflows so field crews stay compliant and productive.
               </p>
 
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2 w-full">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-3 w-full">
                 <Link
                   href="/signup"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-amber-400 px-6 py-3.5 text-sm font-bold text-slate-950 shadow-md shadow-amber-200/90 transition-all hover:bg-amber-500 hover:shadow-amber-300"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-amber-400 px-7 py-4 text-base font-bold text-slate-950 shadow-lg shadow-amber-300/40 transition-all hover:bg-amber-500 hover:shadow-amber-400 active:scale-98"
                 >
                   Start free <ArrowRight size={18} />
                 </Link>
                 <Link
                   href="/signin"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 shadow-2xs transition-all hover:border-slate-400 hover:bg-slate-50"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white/90 px-7 py-4 text-base font-semibold text-slate-800 shadow-sm backdrop-blur-md transition-all hover:border-slate-400 hover:bg-white"
                 >
                   <BarChart3 size={18} className="text-slate-500" />
                   Access Dashboard
                 </Link>
               </div>
 
-              <div className="flex flex-wrap items-center gap-6 text-xs text-slate-500 pt-2 border-t border-slate-200/60">
-                <span className="flex items-center gap-1.5 font-medium">
-                  <CheckCircle2 size={15} className="text-amber-500" /> No credit card required
+              <div className="flex flex-wrap items-center gap-6 text-xs text-slate-600 pt-4 border-t border-slate-200/80 font-medium">
+                <span className="flex items-center gap-1.5 font-bold">
+                  <CheckCircle2 size={16} className="text-amber-500" /> No credit card required
                 </span>
-                <span className="flex items-center gap-1.5 font-medium">
-                  <CheckCircle2 size={15} className="text-amber-500" /> Instant mobile DVIR setup
+                <span className="flex items-center gap-1.5 font-bold">
+                  <CheckCircle2 size={16} className="text-amber-500" /> Instant mobile DVIR setup
                 </span>
-                <span className="flex items-center gap-1.5 font-medium">
-                  <CheckCircle2 size={15} className="text-amber-500" /> DOT & OSHA ready
+                <span className="flex items-center gap-1.5 font-bold">
+                  <CheckCircle2 size={16} className="text-amber-500" /> DOT &amp; OSHA ready
                 </span>
-              </div>
-            </div>
-
-            {/* Hero Commercial Service Vans Image */}
-            <div className="w-full md:w-2/5">
-              <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 shadow-2xl transition-transform hover:scale-[1.01]">
-                <Image
-                  src="/service-vans-hero.png"
-                  alt="Prado Commercial Service Vans & Utility Trucks Fleet"
-                  width={800}
-                  height={550}
-                  priority
-                  className="h-64 sm:h-80 w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent p-5 flex flex-col justify-end">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-amber-400/95 px-3 py-1 text-xs font-bold text-slate-950 w-fit backdrop-blur-md shadow-sm">
-                    <Truck size={14} /> Service Fleet Ready
-                  </span>
-                </div>
               </div>
             </div>
           </div>
+        </section>
+
+        <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-12 sm:px-6 md:py-16">
 
           {/* Full-Width Feature Showcase Carousel Section */}
           <section className="w-full">
@@ -208,7 +209,7 @@ export default function LandingPage() {
               </div>
             </div>
           </section>
-        </section>
+        </div>
       </main>
 
       {/* Footer */}

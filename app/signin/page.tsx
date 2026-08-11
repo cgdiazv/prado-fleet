@@ -8,6 +8,7 @@ type SignInPageProps = {
     from?: string;
     registered?: string;
     verified?: string;
+    deleted?: string;
     email?: string;
   }>;
 };
@@ -38,6 +39,17 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
           <h1 className="mt-1 text-2xl font-semibold text-slate-900">Sign in</h1>
           <p className="mt-1 text-sm text-slate-600">Continue to your fleet operations dashboard.</p>
         </div>
+
+        {/* Account Deleted Success Banner */}
+        {params.deleted === "true" && (
+          <div role="status" className="flex items-start gap-3 rounded-xl border border-slate-300 bg-slate-100 p-3.5 text-xs text-slate-800 shadow-2xs">
+            <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-slate-700" />
+            <div>
+              <p className="font-bold text-slate-900">Account Deleted</p>
+              <p className="mt-0.5 text-slate-600">Your Prado Fleet account and workspace data have been permanently removed.</p>
+            </div>
+          </div>
+        )}
 
         {/* Verification Success Banner */}
         {params.verified === "true" && (

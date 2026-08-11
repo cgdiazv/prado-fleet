@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendDvirDefectAlertEmail } from "@/lib/email";
 
 // GET: Retrieve all DVIR inspections from Supabase
 export async function GET() {
@@ -75,6 +76,34 @@ export async function POST(request: Request) {
         signature: signature || driverName || "Active Driver",
       },
     });
+
+    if (hasDefects) {
+      // Auto-update vehicle status to MAINTENANCE & ALERT
+      await prisma.vehicle.update({
+        where: { id: vehicle.id },
+        data: { status: "MAINTENANCE", telematicsStatus: "ALERT" },
+      });
+
+      // Create automated Maintenance Work Order
+      await prisma.maintenanceOrder.create({
+        data: {
+          vehicleId: vehicle.id,
+          title: `DVIR Defect: ${defects.join(", ")}`,
+          description: `Driver ${driverName || "Active Driver"} reported defects during ${inspectionType} inspection. Notes: ${notes || "None"}`,
+          priority: "HIGH",
+          status: "OPEN",
+        },
+      });
+
+      // Dispatch live email alert via Resend API
+      sendDvirDefectAlertEmail({
+        to: "info@pradofleet.com",
+        driverName: driverName || "Active Driver",
+        vehicleName: vehicle.name,
+        defects: defects || [],
+        notes: notes || "",
+      }).catch((err) => console.error("[DVIR Defect Email Error]:", err));
+    }
 
     return NextResponse.json({ success: true, dvir: newDvir });
   } catch (error) {

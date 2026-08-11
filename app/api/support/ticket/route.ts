@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       return NextResponse.json({
         success: true,
         mock: true,
-        message: "Support ticket logged successfully! (Configure RESEND_API_KEY in .env.local to dispatch live emails).",
+        message: "Support ticket logged successfully! Our team will respond shortly.",
       });
     }
 
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
         </div>
         
         <footer style="margin-top: 24px; font-size: 11px; color: #94a3b8; border-top: 1px solid #f1f5f9; padding-top: 12px;">
-          Sent automatically to support@pradofleet.com via Prado Fleet Engine.
+          Sent automatically to support@pradofleet.com via Prado Fleet System.
         </footer>
       </div>
     `;
@@ -63,9 +63,9 @@ export async function POST(request: Request) {
     });
 
     if (error) {
-      console.error("[Resend Email Error]:", error);
+      console.error("[Email Dispatch Error]:", error);
       return NextResponse.json(
-        { error: error.message || "Failed to send email via Resend" },
+        { error: error.message || "Failed to send support email." },
         { status: 500 }
       );
     }

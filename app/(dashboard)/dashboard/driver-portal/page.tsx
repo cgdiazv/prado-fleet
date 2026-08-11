@@ -287,33 +287,33 @@ export default function DriverPortalPage() {
   return (
     <div className="mx-auto max-w-xl space-y-5 pb-12">
       {/* Mobile Driver Header */}
-      <div className="rounded-3xl border border-slate-900 bg-slate-950 p-6 text-white shadow-xl space-y-4">
+      <div className="rounded-3xl border border-slate-200 bg-white p-6 text-slate-900 shadow-sm space-y-4">
 
         {isLoading ? (
           <div className="flex items-center gap-3 animate-pulse">
-            <div className="size-12 rounded-2xl bg-slate-800" />
+            <div className="size-12 rounded-2xl bg-slate-200" />
             <div className="space-y-2">
-              <div className="h-4 w-32 bg-slate-800 rounded" />
-              <div className="h-3 w-24 bg-slate-800/60 rounded" />
+              <div className="h-4 w-32 bg-slate-200 rounded" />
+              <div className="h-3 w-24 bg-slate-200 rounded" />
             </div>
           </div>
         ) : (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="grid size-12 place-items-center rounded-2xl bg-amber-400 font-sans text-lg font-extrabold text-slate-950 shadow-md">
+              <div className="grid size-12 place-items-center rounded-2xl bg-amber-400 font-sans text-lg font-extrabold text-slate-950 shadow-xs">
                 {(selectedDriver?.name || "Driver")
                   .split(" ")
                   .map((n) => n[0])
                   .join("")}
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-amber-400">
+                <p className="text-xs font-semibold uppercase tracking-wider text-amber-600">
                   Mobile Driver Portal
                 </p>
-                <h1 className="text-xl font-bold text-white">
+                <h1 className="text-xl font-bold text-slate-950">
                   {selectedDriver?.name || "Select Driver Account"}
                 </h1>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs font-medium text-slate-500">
                   {assignedVehicle || "No Vehicle Assigned"}
                 </p>
               </div>
@@ -322,13 +322,13 @@ export default function DriverPortalPage() {
             <span
               className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${
                 isBroadcasting
-                  ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
-                  : "bg-slate-800 text-slate-400 border border-slate-700"
+                  ? "bg-emerald-50 text-emerald-800 border border-emerald-300"
+                  : "bg-slate-100 text-slate-600 border border-slate-300"
               }`}
             >
               <span
                 className={`size-2 rounded-full ${
-                  isBroadcasting ? "bg-emerald-400 animate-ping" : "bg-slate-500"
+                  isBroadcasting ? "bg-emerald-500 animate-ping" : "bg-slate-400"
                 }`}
               />
               {isBroadcasting ? "On Duty" : "Off Duty"}
@@ -337,7 +337,7 @@ export default function DriverPortalPage() {
         )}
 
         {/* Shift Action Button */}
-        <div className="mt-4 border-t border-slate-800/80 pt-4">
+        <div className="mt-4 border-t border-slate-100 pt-4">
           <button
             type="button"
             onClick={isBroadcasting ? endShift : startShift}
@@ -557,12 +557,18 @@ export default function DriverPortalPage() {
                 <p className="text-[11px] text-slate-500 mb-2">Tap any item if a defect is found:</p>
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    "Brakes & Hoses",
-                    "Tires & Rims",
-                    "Headlights & Signal",
-                    "Steering & Coupling",
-                    "Mirrors & Windshield",
-                    "Horn & Safety Belts",
+                    "Service Brakes",
+                    "Hoses & Fluid Lines",
+                    "Tires & Tread",
+                    "Rims & Wheels",
+                    "Headlights",
+                    "Signals & Brake Lights",
+                    "Steering Mechanism",
+                    "Coupling & Fifth Wheel",
+                    "Rearview Mirrors",
+                    "Windshield & Wipers",
+                    "Horn",
+                    "Seat Belts & Safety Equipment",
                   ].map((item) => (
                     <button
                       key={item}

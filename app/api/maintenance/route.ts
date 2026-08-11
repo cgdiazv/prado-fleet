@@ -78,15 +78,34 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT: Update work order status (e.g. IN_PROGRESS, COMPLETED)
+// PUT: Update work order status or expense cost (e.g. attaching parts orders)
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { id, status } = body;
+    const { id, status, cost, additionalCost } = body;
+
+    const existingOrder = await prisma.maintenanceOrder.findUnique({
+      where: { id },
+    });
+
+    if (!existingOrder) {
+      return NextResponse.json({ error: "Work order not found" }, { status: 404 });
+    }
+
+    let updatedCost = existingOrder.cost;
+    if (typeof cost === "number") {
+      updatedCost = cost;
+    } else if (typeof additionalCost === "number") {
+      updatedCost = (existingOrder.cost || 0) + additionalCost;
+    }
+
+    const updateData: any = {};
+    if (status) updateData.status = status;
+    if (updatedCost !== undefined) updateData.cost = updatedCost;
 
     const updated = await prisma.maintenanceOrder.update({
       where: { id },
-      data: { status: status || "COMPLETED" },
+      data: updateData,
     });
 
     return NextResponse.json({ success: true, order: updated });

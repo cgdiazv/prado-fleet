@@ -254,7 +254,7 @@ export default function HelpPage() {
                 Submit Support Ticket
               </div>
               <p className="mt-1 text-xs text-slate-500">
-                Dispatches a ticket to <span className="font-semibold text-slate-800">support@pradofleet.com</span> via Resend.
+                Dispatches a ticket directly to <span className="font-semibold text-slate-800">support@pradofleet.com</span>.
               </p>
             </div>
 

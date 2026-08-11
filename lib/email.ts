@@ -253,3 +253,122 @@ export async function sendWelcomeEmail({ to, name }: SendWelcomeEmailOptions) {
     return { success: false, error };
   }
 }
+
+export type SendDvirAlertOptions = {
+  to: string;
+  driverName: string;
+  vehicleName: string;
+  defects: string[];
+  notes?: string;
+};
+
+export async function sendDvirDefectAlertEmail({
+  to,
+  driverName,
+  vehicleName,
+  defects,
+  notes,
+}: SendDvirAlertOptions) {
+  if (!resend) {
+    console.warn(
+      "[Resend] RESEND_API_KEY is not set in environment variables. Skipping DVIR defect alert email dispatch."
+    );
+    return { success: false, reason: "MISSING_API_KEY" };
+  }
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://pradofleet.com";
+  const defectItems = defects.map((d) => `<li style="margin-bottom: 6px; color: #991b1b; font-weight: bold;">❌ ${d}</li>`).join("");
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DVIR Defect Alert</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f7f7f3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a;">
+  <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f7f7f3; padding: 40px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #ffffff; border-radius: 16px; border: 1px solid #fee2e2; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(225, 29, 72, 0.08);">
+          
+          <!-- Header Banner -->
+          <tr>
+            <td style="background-color: #991b1b; padding: 24px 32px; text-align: left;">
+              <div style="display: inline-block; background-color: #fef2f2; padding: 6px 12px; border-radius: 8px; font-weight: bold; color: #991b1b; font-size: 14px;">
+                🚨 Urgent DVIR Safety Defect Flagged
+              </div>
+            </td>
+          </tr>
+
+          <!-- Main Content -->
+          <tr>
+            <td style="padding: 32px;">
+              <h1 style="margin: 0 0 12px 0; font-size: 20px; font-weight: 800; color: #0f172a;">
+                Defects Reported for ${vehicleName}
+              </h1>
+
+              <p style="margin: 0 0 16px 0; font-size: 14px; color: #334155;">
+                Driver <strong>${driverName}</strong> completed a DVIR inspection and reported safety defects requiring technician review before vehicle operation.
+              </p>
+
+              <!-- Defects List Card -->
+              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 20px 0; background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 20px;">
+                <tr>
+                  <td>
+                    <h3 style="margin: 0 0 10px 0; font-size: 13px; font-weight: 700; color: #991b1b; text-transform: uppercase;">
+                      Flagged Defects
+                    </h3>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                      ${defectItems}
+                    </ul>
+                    ${notes ? `<p style="margin: 12px 0 0 0; font-size: 13px; color: #7f1d1d; border-t: 1px border #fca5a5; pt: 8px;"><strong>Driver Notes:</strong> ${notes}</p>` : ""}
+                  </td>
+                </tr>
+              </table>
+
+              <table role="presentation" border="0" cellspacing="0" cellpadding="0" style="margin: 24px 0;">
+                <tr>
+                  <td align="center" style="border-radius: 10px; background-color: #0f172a;">
+                    <a href="${appUrl}/dashboard/maintenance" target="_blank" style="font-size: 14px; font-weight: 700; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 10px; display: inline-block;">
+                      View Maintenance Work Orders &rarr;
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f8fafc; padding: 20px 32px; border-top: 1px solid #e2e8f0; text-align: center;">
+              <p style="margin: 0; font-size: 11px; color: #94a3b8;">
+                Prado Fleet Operations Alerting • &copy; ${new Date().getFullYear()} Prado Systems.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+
+  try {
+    const data = await resend.emails.send({
+      from: DEFAULT_FROM_EMAIL,
+      to,
+      subject: `🚨 ALERT: DVIR Defects Flagged on ${vehicleName} by ${driverName}`,
+      html: htmlContent,
+    });
+
+    console.log(`[Resend] DVIR Defect Alert dispatched to ${to}. Email ID:`, data.data?.id);
+    return { success: true, id: data.data?.id };
+  } catch (error) {
+    console.error("[Resend] Failed to send DVIR defect alert email:", error);
+    return { success: false, error };
+  }
+}

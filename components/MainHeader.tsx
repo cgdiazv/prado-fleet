@@ -81,15 +81,10 @@ export function MainHeader() {
               <Truck size={22} className="text-slate-950" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="font-sans text-xl font-bold leading-none tracking-tight text-slate-950">
-                  Prado Fleet
-                </span>
-                <span className="hidden rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-900 sm:inline-block">
-                  v2.0
-                </span>
-              </div>
-              <p className="text-[10px] font-medium uppercase tracking-widest text-slate-500">
+              <span className="font-sans text-xl font-bold leading-none tracking-tight text-slate-950">
+                Prado Fleet
+              </span>
+              <p className="mt-0.5 text-[10px] font-medium uppercase tracking-widest text-slate-500">
                 Asset Intelligence
               </p>
             </div>

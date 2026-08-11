@@ -25,13 +25,13 @@ import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 
 const allNavigation = [
   { name: "Overview", href: "/dashboard", icon: BarChart3, roles: ["MANAGER", "ADMIN"] },
-  { name: "Driver Shift Portal", href: "/dashboard/driver-portal", icon: Smartphone, roles: ["DRIVER", "MANAGER", "ADMIN"] },
   { name: "Live Tracking", href: "/dashboard/tracking", icon: MapPin, roles: ["MANAGER", "ADMIN"] },
   { name: "DVIR & Inspection", href: "/dashboard/dvir", icon: ClipboardCheck, roles: ["MANAGER", "ADMIN"] },
-  { name: "Drivers & Team", href: "/dashboard/drivers", icon: Users, roles: ["MANAGER", "ADMIN"] },
   { name: "Maintenance", href: "/dashboard/maintenance", icon: Wrench, roles: ["MANAGER", "ADMIN"] },
+  { name: "Drivers & Team", href: "/dashboard/drivers", icon: Users, roles: ["MANAGER", "ADMIN"] },
   { name: "Assets & Tools", href: "/dashboard/assets", icon: Truck, roles: ["MANAGER", "ADMIN"] },
   { name: "Fuel & Expenses", href: "/dashboard/fuel", icon: Fuel, roles: ["MANAGER", "ADMIN"] },
+  { name: "Driver Shift Portal", href: "/dashboard/driver-portal", icon: Smartphone, roles: ["DRIVER", "MANAGER", "ADMIN"] },
   { name: "Fleet Settings", href: "/dashboard/settings", icon: Settings, roles: ["MANAGER", "ADMIN"] },
 ];
 
