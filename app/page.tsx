@@ -85,39 +85,39 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Live Operations Showcase Section (Moved down under Hero) */}
-          <div className="rounded-3xl border border-slate-900 bg-slate-950 p-6 text-white shadow-2xl sm:p-8">
+          {/* Live Operations Showcase Section */}
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
             <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
               <div className="space-y-4 md:w-1/2">
                 <div className="flex items-center gap-2">
-                  <span className="size-2.5 rounded-full bg-emerald-400 animate-ping" />
-                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">
-                    Real-Time Telematics & Status
+                  <span className="size-2.5 rounded-full bg-emerald-500 animate-ping" />
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-600">
+                    Real-Time Telematics &amp; Status
                   </span>
                 </div>
-                <h2 className="text-2xl font-bold text-white sm:text-3xl">
+                <h2 className="text-2xl font-bold text-slate-950 sm:text-3xl">
                   Live Fleet Control Center
                 </h2>
-                <p className="text-xs leading-relaxed text-slate-300 sm:text-sm">
+                <p className="text-xs leading-relaxed text-slate-600 sm:text-sm">
                   Track active vehicle positions, driver DVIR inspection submissions, and automated diagnostic fault alerts in real time as your crews operate in the field.
                 </p>
                 <div className="pt-2">
-                  <Link
+                  <a
                     href="/signup"
-                    className="inline-flex items-center gap-2 text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors"
+                    className="inline-flex items-center gap-2 text-xs font-bold text-amber-600 hover:text-amber-700 transition-colors"
                   >
                     Explore live monitoring features <ArrowRight size={14} />
-                  </Link>
+                  </a>
                 </div>
               </div>
 
               {/* LIVE FLEET STATUS CARD */}
               <div className="w-full md:w-1/2">
-                <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-2xl">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+                  <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                     <div className="flex items-center gap-2.5">
-                      <span className="size-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                      <span className="text-xs font-mono font-semibold uppercase tracking-wider text-emerald-400">
+                      <span className="size-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="text-xs font-mono font-semibold uppercase tracking-wider text-emerald-600">
                         Live Fleet Status
                       </span>
                     </div>
@@ -125,47 +125,47 @@ export default function LandingPage() {
                   </div>
 
                   <div className="mt-4 space-y-3">
-                    <div className="flex items-center justify-between rounded-xl bg-slate-800/80 p-3">
+                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3 shadow-2xs">
                       <div className="flex items-center gap-3">
-                        <div className="rounded-lg bg-amber-400/20 p-2 text-amber-400">
+                        <div className="rounded-lg bg-amber-100 p-2 text-amber-700">
                           <Truck size={18} />
                         </div>
                         <div>
-                          <p className="text-xs font-bold text-slate-100">Unit #104 — Freightliner M2</p>
-                          <p className="text-[10px] text-slate-400">Route 9 — En Route to Site B</p>
+                          <p className="text-xs font-bold text-slate-900">Unit #104 — Freightliner M2</p>
+                          <p className="text-[10px] text-slate-500">Route 9 — En Route to Site B</p>
                         </div>
                       </div>
-                      <span className="rounded-md bg-emerald-500/20 px-2 py-0.5 text-[10px] font-medium text-emerald-300">
+                      <span className="rounded-md bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
                         Active
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between rounded-xl bg-slate-800/80 p-3">
+                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3 shadow-2xs">
                       <div className="flex items-center gap-3">
-                        <div className="rounded-lg bg-blue-400/20 p-2 text-blue-400">
+                        <div className="rounded-lg bg-blue-100 p-2 text-blue-700">
                           <ClipboardCheck size={18} />
                         </div>
                         <div>
-                          <p className="text-xs font-bold text-slate-100">Pre-Trip DVIR Inspection</p>
-                          <p className="text-[10px] text-slate-400">Passed by Alex Rivera (Driver)</p>
+                          <p className="text-xs font-bold text-slate-900">Pre-Trip DVIR Inspection</p>
+                          <p className="text-[10px] text-slate-500">Passed by Alex Rivera (Driver)</p>
                         </div>
                       </div>
-                      <span className="rounded-md bg-blue-500/20 px-2 py-0.5 text-[10px] font-medium text-blue-300">
+                      <span className="rounded-md bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700">
                         Passed
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between rounded-xl bg-slate-800/80 p-3">
+                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3 shadow-2xs">
                       <div className="flex items-center gap-3">
-                        <div className="rounded-lg bg-amber-500/20 p-2 text-amber-400">
+                        <div className="rounded-lg bg-amber-100 p-2 text-amber-700">
                           <Wrench size={18} />
                         </div>
                         <div>
-                          <p className="text-xs font-bold text-slate-100">Brake Pad Diagnostics</p>
-                          <p className="text-[10px] text-slate-400">Automated Work Order Generated</p>
+                          <p className="text-xs font-bold text-slate-900">Brake Pad Diagnostics</p>
+                          <p className="text-[10px] text-slate-500">Automated Work Order Generated</p>
                         </div>
                       </div>
-                      <span className="rounded-md bg-amber-500/20 px-2 py-0.5 text-[10px] font-medium text-amber-300">
+                      <span className="rounded-md bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
                         Service
                       </span>
                     </div>
@@ -174,6 +174,7 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
+          
 
           {/* Features Grid Section */}
           <div id="features" className="scroll-mt-24 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
