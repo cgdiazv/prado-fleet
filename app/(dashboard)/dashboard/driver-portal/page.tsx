@@ -280,7 +280,7 @@ export default function DriverPortalPage() {
     if (selectedDriver) {
       localStorage.removeItem(`prado_shift_active_${selectedDriver.id}`);
 
-      // Sync off duty status to DB
+      // 1. Sync off duty status to DB driver table
       fetch("/api/drivers", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -289,6 +289,17 @@ export default function DriverPortalPage() {
           name: selectedDriver.name,
           email: selectedDriver.email,
           status: "off_duty",
+        }),
+      }).catch(console.error);
+
+      // 2. Send stop_streaming signal to telematics location API to mark vehicle offline
+      fetch("/api/telematics/location", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          vehicleId: vehicles[0]?.id || "truck-01",
+          driver: selectedDriver.name,
+          action: "stop_streaming",
         }),
       }).catch(console.error);
     }

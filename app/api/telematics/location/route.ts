@@ -7,7 +7,7 @@ export async function GET() {
     const vehicles = await prisma.vehicle.findMany({
       include: {
         assignedDriver: {
-          select: { name: true },
+          select: { name: true, status: true },
         },
       },
     });
@@ -25,13 +25,16 @@ export async function GET() {
       const validLat = typeof v.lat === "number" && !isNaN(v.lat) ? v.lat : defaultCoord.lat;
       const validLng = typeof v.lng === "number" && !isNaN(v.lng) ? v.lng : defaultCoord.lng;
 
+      const driverDutyStatus = v.assignedDriver?.status?.toLowerCase();
+      const isOffDuty = driverDutyStatus === "off_duty" || v.telematicsStatus.toLowerCase() === "offline";
+
       return {
         id: v.id,
         name: v.name,
         driver: v.assignedDriver?.name || "Unassigned Driver",
-        status: v.telematicsStatus.toLowerCase(),
-        speed: Math.round(v.currentSpeed),
-        destination: v.destination || "En Route",
+        status: isOffDuty ? "offline" : v.telematicsStatus.toLowerCase(),
+        speed: isOffDuty ? 0 : Math.round(v.currentSpeed),
+        destination: isOffDuty ? "Off Duty (Shift Ended)" : (v.destination || "En Route"),
         lat: validLat,
         lng: validLng,
         updatedAt: v.updatedAt.toISOString(),
@@ -49,7 +52,47 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { vehicleId, driver, lat, lng, speed } = body;
+    const { vehicleId, driver, lat, lng, speed, action } = body;
+
+    // Handle explicit stop streaming action
+    if (action === "stop_streaming") {
+      let targetVehicle = vehicleId ? await prisma.vehicle.findUnique({ where: { id: vehicleId } }) : null;
+      if (!targetVehicle && driver) {
+        const driverRecord = await prisma.driver.findFirst({
+          where: { name: { equals: driver, mode: "insensitive" } },
+          include: { vehicles: true },
+        });
+        if (driverRecord && driverRecord.vehicles.length > 0) {
+          targetVehicle = driverRecord.vehicles[0];
+        }
+      }
+      if (!targetVehicle) targetVehicle = await prisma.vehicle.findFirst();
+
+      if (targetVehicle) {
+        const updated = await prisma.vehicle.update({
+          where: { id: targetVehicle.id },
+          data: {
+            currentSpeed: 0,
+            telematicsStatus: "IDLE",
+            destination: "Off Duty (Shift Ended)",
+          },
+        });
+        return NextResponse.json({
+          success: true,
+          location: {
+            id: updated.id,
+            name: updated.name,
+            driver: driver || "Off Duty Driver",
+            status: "offline",
+            speed: 0,
+            destination: "Off Duty (Shift Ended)",
+            lat: updated.lat,
+            lng: updated.lng,
+            updatedAt: updated.updatedAt.toISOString(),
+          },
+        });
+      }
+    }
 
     const numLat = Number(lat);
     const numLng = Number(lng);
@@ -92,6 +135,7 @@ export async function POST(request: Request) {
           lng: numLng,
           currentSpeed: currentSpeed,
           telematicsStatus: telematicsStatus,
+          destination: telematicsStatus === "MOVING" ? "En Route (Live GPS Stream)" : "En Route (Idle)",
         },
       });
 

@@ -10,7 +10,7 @@ export type LiveVehiclePin = {
   name: string;
   lat: number;
   lng: number;
-  status: "moving" | "idle" | "alert";
+  status: "moving" | "idle" | "alert" | "offline";
   driver?: string;
   speed?: number;
   destination?: string;
@@ -216,11 +216,14 @@ export default function LiveGpsMap({ vehicles, center = DEFAULT_CENTER, zoom = 9
 
     vehicles.forEach((vehicle) => {
       const markerElement = document.createElement("div");
+      const isOffline = vehicle.status === "offline";
       const bgColor =
         vehicle.status === "alert"
           ? "#ef4444"
           : vehicle.status === "idle"
           ? "#f59e0b"
+          : isOffline
+          ? "#64748b"
           : "#10b981";
 
       markerElement.style.width = "32px";
@@ -233,6 +236,7 @@ export default function LiveGpsMap({ vehicles, center = DEFAULT_CENTER, zoom = 9
       markerElement.style.alignItems = "center";
       markerElement.style.justifyContent = "center";
       markerElement.style.cursor = "pointer";
+      markerElement.style.opacity = isOffline ? "0.75" : "1";
       markerElement.innerHTML = `
         <div style="display:flex;align-items:center;justify-content:center;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -248,8 +252,9 @@ export default function LiveGpsMap({ vehicles, center = DEFAULT_CENTER, zoom = 9
         <div style="padding:4px 6px;color:#0f172a;font-family:sans-serif;font-size:12px;line-height:1.4;">
           <div style="font-weight:700;font-size:13px;color:#0f172a;">${vehicle.name}</div>
           <div style="color:#475569;margin-top:2px;">Driver: <strong style="color:#0f172a;">${vehicle.driver || "Unassigned"}</strong></div>
+          <div style="color:#475569;">Status: <strong style="color:${isOffline ? "#64748b" : "#10b981"};">${isOffline ? "OFFLINE / OFF DUTY" : vehicle.status.toUpperCase()}</strong></div>
           <div style="color:#475569;">Speed: <strong style="color:#0f172a;">${vehicle.speed ?? 0} mph</strong></div>
-          ${vehicle.destination ? `<div style="color:#0284c7;font-weight:600;margin-top:2px;">📍 ${vehicle.destination}</div>` : ""}
+          ${vehicle.destination ? `<div style="color:${isOffline ? "#64748b" : "#0284c7"};font-weight:600;margin-top:2px;">📍 ${vehicle.destination}</div>` : ""}
         </div>
       `;
 

@@ -8,7 +8,7 @@ type Vehicle = {
   id: string;
   name: string;
   driver: string;
-  status: "moving" | "idle" | "alert";
+  status: "moving" | "idle" | "alert" | "offline";
   speed: number;
   destination: string;
   lat: number;
@@ -107,10 +107,18 @@ export default function TrackingPage() {
                         ? "border-amber-200 bg-amber-50 text-amber-700"
                         : vehicle.status === "alert"
                         ? "border-rose-500/20 bg-rose-500/10 text-rose-500"
+                        : vehicle.status === "offline"
+                        ? "border-slate-300 bg-slate-100 text-slate-500"
                         : "border-emerald-500/20 bg-emerald-500/10 text-emerald-600"
                     }`}
                   >
-                    {vehicle.status === "moving" ? "Moving" : vehicle.status === "alert" ? "Alert" : "Idle"}
+                    {vehicle.status === "moving"
+                      ? "Moving"
+                      : vehicle.status === "alert"
+                      ? "Alert"
+                      : vehicle.status === "offline"
+                      ? "Off Duty"
+                      : "Idle"}
                   </span>
                 </div>
                 <div className="flex justify-between text-xs text-slate-500">
