@@ -140,21 +140,39 @@ enum PriorityLevel {
 enum WorkOrderStatus {
   OPEN
   IN_PROGRESS
+  PARTS_ORDERED
   COMPLETED
 }
 
 model MaintenanceOrder {
-  id          String          @id @default(uuid()) @db.Uuid
-  vehicleId   String          @db.Uuid
-  vehicle     Vehicle         @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  title       String
-  description String?
-  priority    PriorityLevel   @default(MEDIUM)
-  status      WorkOrderStatus @default(OPEN)
-  assignedTo  String?
-  cost        Float?
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  id           String            @id @default(uuid()) @db.Uuid
+  vehicleId    String            @db.Uuid
+  vehicle      Vehicle           @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  title        String
+  description  String?
+  priority     PriorityLevel     @default(MEDIUM)
+  status       WorkOrderStatus   @default(OPEN)
+  assignedTo   String?
+  cost         Float?
+  requisitions PartRequisition[]
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+}
+
+model PartRequisition {
+  id          String           @id @default(uuid()) @db.Uuid
+  workOrderId String           @db.Uuid
+  workOrder   MaintenanceOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  partName    String
+  partNumber  String
+  supplier    String
+  supplierUrl String?
+  quantity    Int
+  unitCost    Float
+  totalCost   Float
+  orderedAt   DateTime         @default(now())
+
+  @@index([workOrderId])
 }
 
 model Asset {

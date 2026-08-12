@@ -12,17 +12,28 @@ export async function GET() {
       },
     });
 
-    const formattedVehicles = vehicles.map((v) => ({
-      id: v.id,
-      name: v.name,
-      driver: v.assignedDriver?.name || "Unassigned Driver",
-      status: v.telematicsStatus.toLowerCase(),
-      speed: Math.round(v.currentSpeed),
-      destination: v.destination || "En Route",
-      lat: v.lat ?? 32.7767,
-      lng: v.lng ?? -96.797,
-      updatedAt: v.updatedAt.toISOString(),
-    }));
+    const BASE_DALLAS_COORDS = [
+      { lat: 32.7767, lng: -96.797 },
+      { lat: 32.7812, lng: -96.8021 },
+      { lat: 32.7715, lng: -96.7892 },
+      { lat: 32.7850, lng: -96.7910 },
+      { lat: 32.7680, lng: -96.8050 },
+    ];
+
+    const formattedVehicles = vehicles.map((v, index) => {
+      const defaultCoord = BASE_DALLAS_COORDS[index % BASE_DALLAS_COORDS.length];
+      return {
+        id: v.id,
+        name: v.name,
+        driver: v.assignedDriver?.name || "Unassigned Driver",
+        status: v.telematicsStatus.toLowerCase(),
+        speed: Math.round(v.currentSpeed),
+        destination: v.destination || "En Route",
+        lat: v.lat ?? defaultCoord.lat,
+        lng: v.lng ?? defaultCoord.lng,
+        updatedAt: v.updatedAt.toISOString(),
+      };
+    });
 
     return NextResponse.json({ vehicles: formattedVehicles, total: formattedVehicles.length });
   } catch (error) {

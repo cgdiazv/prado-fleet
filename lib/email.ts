@@ -372,3 +372,170 @@ export async function sendDvirDefectAlertEmail({
     return { success: false, error };
   }
 }
+
+export type PartsRequisitionItem = {
+  partName: string;
+  partNumber: string;
+  supplier: string;
+  supplierUrl?: string;
+  quantity: number;
+  unitCost: number;
+  totalCost: number;
+};
+
+export type SendPartsRequisitionEmailOptions = {
+  to: string;
+  managerName: string;
+  vehicleName: string;
+  workOrderTitle: string;
+  parts: PartsRequisitionItem[];
+  grandTotal: number;
+};
+
+export async function sendPartsRequisitionEmail({
+  to,
+  managerName,
+  vehicleName,
+  workOrderTitle,
+  parts,
+  grandTotal,
+}: SendPartsRequisitionEmailOptions) {
+  if (!resend) {
+    console.warn("[Resend] RESEND_API_KEY not set. Skipping parts requisition email.");
+    return { success: false, reason: "MISSING_API_KEY" };
+  }
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://pradofleet.com";
+  const firstName = managerName.split(" ")[0] || managerName;
+  const orderedDate = new Date().toLocaleDateString("en-US", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+  });
+
+  const rowsHtml = parts
+    .map(
+      (p, i) => `
+      <tr style="background-color: ${i % 2 === 0 ? "#ffffff" : "#f8fafc"};">
+        <td style="padding: 10px 12px; font-size: 13px; color: #0f172a; font-weight: 600; border-bottom: 1px solid #e2e8f0;">${p.partName}</td>
+        <td style="padding: 10px 12px; font-size: 12px; color: #64748b; font-family: monospace; border-bottom: 1px solid #e2e8f0;">${p.partNumber}</td>
+        <td style="padding: 10px 12px; font-size: 12px; color: #334155; border-bottom: 1px solid #e2e8f0;">
+          ${p.supplierUrl
+            ? `<a href="${p.supplierUrl}" style="color: #0284c7; text-decoration: underline;">${p.supplier}</a>`
+            : p.supplier}
+        </td>
+        <td style="padding: 10px 12px; font-size: 13px; color: #334155; text-align: center; border-bottom: 1px solid #e2e8f0;">${p.quantity}</td>
+        <td style="padding: 10px 12px; font-size: 13px; color: #334155; text-align: right; font-family: monospace; border-bottom: 1px solid #e2e8f0;">$${p.unitCost.toFixed(2)}</td>
+        <td style="padding: 10px 12px; font-size: 13px; font-weight: 700; color: #0f172a; text-align: right; font-family: monospace; border-bottom: 1px solid #e2e8f0;">$${p.totalCost.toFixed(2)}</td>
+      </tr>`
+    )
+    .join("");
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parts Requisition Confirmed</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f7f7f3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a;">
+  <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f7f7f3; padding: 40px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 640px; background-color: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);">
+
+          <!-- Header -->
+          <tr>
+            <td style="background-color: #0f172a; padding: 28px 32px;">
+              <div style="display: inline-block; background-color: #facc15; padding: 7px 12px; border-radius: 8px; font-weight: bold; color: #020617; font-size: 15px;">Prado Fleet</div>
+              <p style="margin: 8px 0 0 0; color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 2px;">Parts Requisition Confirmed</p>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding: 32px 32px 24px 32px;">
+              <h1 style="margin: 0 0 8px 0; font-size: 22px; font-weight: 800; color: #0f172a;">Parts Order Submitted, ${firstName}</h1>
+              <p style="margin: 0 0 20px 0; font-size: 14px; color: #334155; line-height: 1.6;">
+                Your parts requisition for <strong>${vehicleName}</strong> has been confirmed and attached to the work order below.
+              </p>
+
+              <!-- Work Order Summary -->
+              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 24px; background-color: #fffdf5; border: 1px solid #fef08a; border-radius: 12px; padding: 16px;">
+                <tr>
+                  <td>
+                    <p style="margin: 0 0 4px 0; font-size: 11px; font-weight: 700; color: #92400e; text-transform: uppercase; letter-spacing: 0.5px;">Work Order</p>
+                    <p style="margin: 0 0 8px 0; font-size: 15px; font-weight: 700; color: #0f172a;">${workOrderTitle}</p>
+                    <p style="margin: 0; font-size: 12px; color: #64748b;">Vehicle: <strong>${vehicleName}</strong> &nbsp;·&nbsp; Ordered: ${orderedDate}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Parts Table -->
+              <h3 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px;">Itemized Parts List (${parts.length} ${parts.length === 1 ? "item" : "items"})</h3>
+              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden;">
+                <thead>
+                  <tr style="background-color: #f1f5f9;">
+                    <th style="padding: 9px 12px; font-size: 10px; font-weight: 700; color: #64748b; text-align: left; text-transform: uppercase; letter-spacing: 0.5px;">Part Description</th>
+                    <th style="padding: 9px 12px; font-size: 10px; font-weight: 700; color: #64748b; text-align: left; text-transform: uppercase; letter-spacing: 0.5px;">SKU</th>
+                    <th style="padding: 9px 12px; font-size: 10px; font-weight: 700; color: #64748b; text-align: left; text-transform: uppercase; letter-spacing: 0.5px;">Supplier</th>
+                    <th style="padding: 9px 12px; font-size: 10px; font-weight: 700; color: #64748b; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">Qty</th>
+                    <th style="padding: 9px 12px; font-size: 10px; font-weight: 700; color: #64748b; text-align: right; text-transform: uppercase; letter-spacing: 0.5px;">Unit $</th>
+                    <th style="padding: 9px 12px; font-size: 10px; font-weight: 700; color: #64748b; text-align: right; text-transform: uppercase; letter-spacing: 0.5px;">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rowsHtml}
+                </tbody>
+              </table>
+
+              <!-- Grand Total -->
+              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top: 12px; background-color: #fefce8; border: 1px solid #fde047; border-radius: 10px; padding: 14px 16px;">
+                <tr>
+                  <td style="font-size: 14px; font-weight: 700; color: #78350f;">Total Parts Expense</td>
+                  <td style="font-size: 20px; font-weight: 900; color: #0f172a; text-align: right; font-family: monospace;">$${grandTotal.toFixed(2)}</td>
+                </tr>
+              </table>
+
+              <!-- CTA -->
+              <table role="presentation" border="0" cellspacing="0" cellpadding="0" style="margin: 28px 0 8px 0;">
+                <tr>
+                  <td align="center" style="border-radius: 10px; background-color: #facc15;">
+                    <a href="${appUrl}/maintenance" target="_blank" style="font-size: 14px; font-weight: 700; color: #020617; text-decoration: none; padding: 13px 28px; border-radius: 10px; display: inline-block;">
+                      View Work Orders &rarr;
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f8fafc; padding: 20px 32px; border-top: 1px solid #e2e8f0; text-align: center;">
+              <p style="margin: 0 0 4px 0; font-size: 12px; font-weight: 600; color: #475569;">Prado Fleet — Fleet Operations &amp; Telematics</p>
+              <p style="margin: 0; font-size: 11px; color: #94a3b8;">&copy; ${new Date().getFullYear()} Prado Systems. All rights reserved.</p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+
+  try {
+    const data = await resend.emails.send({
+      from: DEFAULT_FROM_EMAIL,
+      to,
+      subject: `🛒 Parts Ordered: ${parts.length} items ($${grandTotal.toFixed(2)}) — ${vehicleName}`,
+      html: htmlContent,
+    });
+    console.log(`[Resend] Parts requisition email sent to ${to}. ID:`, data.data?.id);
+    return { success: true, id: data.data?.id };
+  } catch (error) {
+    console.error("[Resend] Failed to send parts requisition email:", error);
+    return { success: false, error };
+  }
+}

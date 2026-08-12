@@ -204,7 +204,7 @@ export default function LiveGpsMap({ vehicles, center = DEFAULT_CENTER, zoom = 9
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !map.isStyleLoaded()) {
+    if (!map || !mapReady) {
       return;
     }
 
@@ -278,7 +278,7 @@ export default function LiveGpsMap({ vehicles, center = DEFAULT_CENTER, zoom = 9
         },
       });
     }
-  }, [routeCoordinates, vehicles]);
+  }, [routeCoordinates, vehicles, mapReady]);
 
   useEffect(() => {
     if (!isPlaying || routePlayback.points.length < 2) {
