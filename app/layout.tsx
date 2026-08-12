@@ -21,6 +21,11 @@ export const metadata: Metadata = {
   description:
     "The all-in-one fleet operations workspace for managing vehicles, telematics, maintenance, compliance, and team workflows seamlessly.",
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
