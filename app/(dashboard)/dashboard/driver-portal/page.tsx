@@ -114,14 +114,22 @@ export default function DriverPortalPage() {
           const data = await driversRes.json();
           if (data.drivers && data.drivers.length > 0) {
             setDrivers(data.drivers);
-            setSelectedDriver(data.drivers[0]);
-            setSignature(data.drivers[0].name);
+            const initialDriver = data.drivers[0];
+            setSelectedDriver(initialDriver);
+            setSignature(initialDriver.name);
 
             const vehicleName =
-              data.drivers[0].assignedVehicle !== "Unassigned"
-                ? data.drivers[0].assignedVehicle
+              initialDriver.assignedVehicle !== "Unassigned"
+                ? initialDriver.assignedVehicle
                 : loadedVehicles[0]?.name || "Unassigned Vehicle";
             setAssignedVehicle(vehicleName);
+
+            // Check if initial driver has an active shift persisted or in DB
+            const isSavedActive = localStorage.getItem(`prado_shift_active_${initialDriver.id}`) === "true";
+            const isDbActive = initialDriver.status === "on_duty" || initialDriver.status === "on_route";
+            if (isSavedActive || isDbActive) {
+              startShift(initialDriver, vehicleName);
+            }
           }
         }
       } catch (err) {
@@ -135,6 +143,12 @@ export default function DriverPortalPage() {
   }, []);
 
   const handleDriverChange = (driverId: string) => {
+    // End active watch when switching drivers
+    if (watchIdRef.current !== null) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+      watchIdRef.current = null;
+    }
+
     const found = drivers.find((d) => d.id === driverId);
     if (found) {
       setSelectedDriver(found);
@@ -144,16 +158,26 @@ export default function DriverPortalPage() {
           ? found.assignedVehicle
           : vehicles[0]?.name || "Unassigned Vehicle";
       setAssignedVehicle(vehicleName);
+
+      const isSavedActive = localStorage.getItem(`prado_shift_active_${found.id}`) === "true";
+      const isDbActive = found.status === "on_duty" || found.status === "on_route";
+      if (isSavedActive || isDbActive) {
+        startShift(found, vehicleName);
+      } else {
+        setIsBroadcasting(false);
+      }
     }
   };
 
-  const sendLocationPing = async (position: GeolocationPosition) => {
+  const sendLocationPing = async (position: GeolocationPosition, targetDriver?: DriverProfile, targetVehicleName?: string) => {
     const { latitude, longitude, speed, accuracy } = position.coords;
+    const currentDriver = targetDriver || selectedDriver;
+    const currentVehicleName = targetVehicleName || assignedVehicle;
 
     const data = {
       vehicleId: vehicles[0]?.id || "truck-01",
-      driver: selectedDriver?.name || "Active Driver",
-      name: assignedVehicle || "Active Vehicle",
+      driver: currentDriver?.name || "Active Driver",
+      name: currentVehicleName || "Active Vehicle",
       lat: latitude,
       lng: longitude,
       speed: speed || 0,
@@ -180,11 +204,29 @@ export default function DriverPortalPage() {
     }
   };
 
-  const startShift = () => {
+  const startShift = (targetDriver?: DriverProfile, targetVehicleName?: string) => {
     if (!("geolocation" in navigator)) {
       setGpsError("Geolocation is not supported by your mobile browser.");
       return;
     }
+
+    const activeDriver = targetDriver || selectedDriver;
+    if (!activeDriver) return;
+
+    // Save shift state in localStorage for persistent background/reopen recovery
+    localStorage.setItem(`prado_shift_active_${activeDriver.id}`, "true");
+
+    // Sync driver status to database
+    fetch("/api/drivers", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: activeDriver.id,
+        name: activeDriver.name,
+        email: activeDriver.email,
+        status: "on_duty",
+      }),
+    }).catch(console.error);
 
     setGpsError(null);
 
@@ -193,11 +235,16 @@ export default function DriverPortalPage() {
       (position) => {
         setGeoPermission("granted");
         setIsBroadcasting(true);
-        sendLocationPing(position);
+        sendLocationPing(position, activeDriver, targetVehicleName);
+
+        // Clear existing watch if active
+        if (watchIdRef.current !== null) {
+          navigator.geolocation.clearWatch(watchIdRef.current);
+        }
 
         // Start continuous background watch
         const watchId = navigator.geolocation.watchPosition(
-          (pos) => sendLocationPing(pos),
+          (pos) => sendLocationPing(pos, activeDriver, targetVehicleName),
           (err) => {
             console.error("[Geolocation Error]:", err);
             setGpsError(
@@ -229,16 +276,48 @@ export default function DriverPortalPage() {
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
     }
+
+    if (selectedDriver) {
+      localStorage.removeItem(`prado_shift_active_${selectedDriver.id}`);
+
+      // Sync off duty status to DB
+      fetch("/api/drivers", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: selectedDriver.id,
+          name: selectedDriver.name,
+          email: selectedDriver.email,
+          status: "off_duty",
+        }),
+      }).catch(console.error);
+    }
+
     setIsBroadcasting(false);
   };
 
+  // Re-acquire GPS stream when driver re-opens or focuses the app tab
   useEffect(() => {
+    const handleAppResume = () => {
+      if (!document.hidden && selectedDriver) {
+        const isShiftActive = localStorage.getItem(`prado_shift_active_${selectedDriver.id}`) === "true";
+        if (isShiftActive && watchIdRef.current === null) {
+          startShift(selectedDriver);
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleAppResume);
+    window.addEventListener("focus", handleAppResume);
+
     return () => {
+      document.removeEventListener("visibilitychange", handleAppResume);
+      window.removeEventListener("focus", handleAppResume);
       if (watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current);
       }
     };
-  }, []);
+  }, [selectedDriver]);
 
   const handleDvirSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -337,7 +416,7 @@ export default function DriverPortalPage() {
         <div className="mt-4 border-t border-slate-100 pt-4">
           <button
             type="button"
-            onClick={isBroadcasting ? endShift : startShift}
+            onClick={isBroadcasting ? endShift : () => startShift()}
             className={`w-full inline-flex items-center justify-center gap-2.5 rounded-2xl py-3.5 text-sm font-extrabold transition-all shadow-lg active:scale-98 ${
               isBroadcasting
                 ? "bg-rose-600 text-white hover:bg-rose-700 shadow-rose-900/40"
@@ -375,7 +454,7 @@ export default function DriverPortalPage() {
           </div>
           <button
             type="button"
-            onClick={startShift}
+            onClick={() => startShift()}
             className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-950 px-4 py-3 text-xs font-bold text-white hover:bg-slate-800 transition-colors shadow-sm active:scale-98"
           >
             <Navigation size={15} className="text-amber-400" />
