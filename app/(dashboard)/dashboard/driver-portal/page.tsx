@@ -301,10 +301,7 @@ export default function DriverPortalPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="grid size-12 place-items-center rounded-2xl bg-amber-400 font-sans text-lg font-extrabold text-slate-950 shadow-xs">
-                {(selectedDriver?.name || "Driver")
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
+                {(selectedDriver?.name || "Driver").trim()[0]?.toUpperCase() || "D"}
               </div>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-amber-600">

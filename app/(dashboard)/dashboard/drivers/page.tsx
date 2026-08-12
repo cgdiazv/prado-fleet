@@ -311,10 +311,7 @@ export default function DriversPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <div className="grid size-10 place-items-center rounded-xl bg-amber-100 font-sans text-sm font-bold text-amber-900">
-                      {member.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
+                      {member.name.trim()[0]?.toUpperCase() || "D"}
                     </div>
                     <div>
                       <h3 className="text-base font-bold text-slate-950">{member.name}</h3>

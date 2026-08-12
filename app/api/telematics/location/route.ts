@@ -22,6 +22,9 @@ export async function GET() {
 
     const formattedVehicles = vehicles.map((v, index) => {
       const defaultCoord = BASE_DALLAS_COORDS[index % BASE_DALLAS_COORDS.length];
+      const validLat = typeof v.lat === "number" && !isNaN(v.lat) ? v.lat : defaultCoord.lat;
+      const validLng = typeof v.lng === "number" && !isNaN(v.lng) ? v.lng : defaultCoord.lng;
+
       return {
         id: v.id,
         name: v.name,
@@ -29,8 +32,8 @@ export async function GET() {
         status: v.telematicsStatus.toLowerCase(),
         speed: Math.round(v.currentSpeed),
         destination: v.destination || "En Route",
-        lat: v.lat ?? defaultCoord.lat,
-        lng: v.lng ?? defaultCoord.lng,
+        lat: validLat,
+        lng: validLng,
         updatedAt: v.updatedAt.toISOString(),
       };
     });
@@ -48,22 +51,45 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { vehicleId, driver, lat, lng, speed } = body;
 
-    if (!lat || !lng) {
+    const numLat = Number(lat);
+    const numLng = Number(lng);
+
+    if (isNaN(numLat) || isNaN(numLng) || numLat === 0 || numLng === 0) {
       return NextResponse.json({ error: "Invalid coordinates" }, { status: 400 });
     }
 
     const currentSpeed = typeof speed === "number" ? Math.round(speed * 2.23694) : 0;
     const telematicsStatus = currentSpeed > 2 ? "MOVING" : "IDLE";
 
-    // Find first vehicle or update by ID
-    const targetVehicle = await prisma.vehicle.findFirst();
+    // 1. Find vehicle by ID
+    let targetVehicle = null;
+
+    if (vehicleId) {
+      targetVehicle = await prisma.vehicle.findUnique({ where: { id: vehicleId } });
+    }
+
+    // 2. Find by driver name
+    if (!targetVehicle && driver) {
+      const driverRecord = await prisma.driver.findFirst({
+        where: { name: { equals: driver, mode: "insensitive" } },
+        include: { vehicles: true },
+      });
+      if (driverRecord && driverRecord.vehicles.length > 0) {
+        targetVehicle = driverRecord.vehicles[0];
+      }
+    }
+
+    // 3. Fallback to first vehicle in database
+    if (!targetVehicle) {
+      targetVehicle = await prisma.vehicle.findFirst();
+    }
 
     if (targetVehicle) {
       const updated = await prisma.vehicle.update({
         where: { id: targetVehicle.id },
         data: {
-          lat: Number(lat),
-          lng: Number(lng),
+          lat: numLat,
+          lng: numLng,
           currentSpeed: currentSpeed,
           telematicsStatus: telematicsStatus,
         },

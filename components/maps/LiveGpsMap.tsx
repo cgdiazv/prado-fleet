@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 import { MapPin, Navigation2, Pause, Play, Radio, RotateCcw, ShieldAlert } from "lucide-react";
 
 export type LiveVehiclePin = {
@@ -215,34 +216,54 @@ export default function LiveGpsMap({ vehicles, center = DEFAULT_CENTER, zoom = 9
 
     vehicles.forEach((vehicle) => {
       const markerElement = document.createElement("div");
-      markerElement.className = `h-3.5 w-3.5 rounded-full border-2 border-slate-950 shadow-lg ${
+      const bgColor =
         vehicle.status === "alert"
-          ? "bg-rose-500"
+          ? "#ef4444"
           : vehicle.status === "idle"
-          ? "bg-amber-400"
-          : "bg-amber-500"
-      }`;
+          ? "#f59e0b"
+          : "#10b981";
 
-      const marker = new mapboxgl.Marker(markerElement)
+      markerElement.style.width = "32px";
+      markerElement.style.height = "32px";
+      markerElement.style.borderRadius = "50%";
+      markerElement.style.backgroundColor = bgColor;
+      markerElement.style.border = "3px solid #0f172a";
+      markerElement.style.boxShadow = "0 4px 12px rgba(0,0,0,0.35)";
+      markerElement.style.display = "flex";
+      markerElement.style.alignItems = "center";
+      markerElement.style.justifyContent = "center";
+      markerElement.style.cursor = "pointer";
+      markerElement.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:center;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="15" height="13"></rect>
+            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+          </svg>
+        </div>
+      `;
+
+      const popupHtml = `
+        <div style="padding:4px 6px;color:#0f172a;font-family:sans-serif;font-size:12px;line-height:1.4;">
+          <div style="font-weight:700;font-size:13px;color:#0f172a;">${vehicle.name}</div>
+          <div style="color:#475569;margin-top:2px;">Driver: <strong style="color:#0f172a;">${vehicle.driver || "Unassigned"}</strong></div>
+          <div style="color:#475569;">Speed: <strong style="color:#0f172a;">${vehicle.speed ?? 0} mph</strong></div>
+          ${vehicle.destination ? `<div style="color:#0284c7;font-weight:600;margin-top:2px;">📍 ${vehicle.destination}</div>` : ""}
+        </div>
+      `;
+
+      const marker = new mapboxgl.Marker({ element: markerElement })
         .setLngLat([vehicle.lng, vehicle.lat])
-        .setPopup(
-          new mapboxgl.Popup({ offset: 18 }).setHTML(
-            `<div style="color:#e2e8f0;font-family:ui-sans-serif,system-ui;font-size:12px;line-height:1.4;">
-              <strong>${vehicle.name}</strong><br />
-              ${vehicle.driver ? `Driver: ${vehicle.driver}<br />` : ""}
-              ${vehicle.speed !== undefined ? `Speed: ${vehicle.speed} mph<br />` : ""}
-              ${vehicle.destination ? `Destination: ${vehicle.destination}` : ""}
-            </div>`,
-          ),
-        )
+        .setPopup(new mapboxgl.Popup({ offset: 18 }).setHTML(popupHtml))
         .addTo(map);
 
       markersRef.current.push(marker);
       bounds.extend([vehicle.lng, vehicle.lat]);
     });
 
-    if (!bounds.isEmpty()) {
-      map.fitBounds(bounds, { padding: 80, maxZoom: 12, duration: 800 });
+    if (!bounds.isEmpty() && markersRef.current.length > 0) {
+      map.fitBounds(bounds, { padding: 80, maxZoom: 14, duration: 800 });
     }
 
     if (map.getSource("fleet-route")) {
