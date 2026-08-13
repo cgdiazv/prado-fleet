@@ -208,7 +208,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl">
+    <div className="space-y-6 w-full">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-600">Administration</p>
         <h1 className="text-3xl font-semibold tracking-tight text-slate-900">Fleet Settings</h1>

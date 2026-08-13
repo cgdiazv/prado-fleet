@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Download, Share, X } from "lucide-react";
+import appIcon from "@/app/icon.png";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -70,7 +71,7 @@ export function PwaInstallPrompt() {
         <div className="flex items-center gap-3">
           <div className="overflow-hidden rounded-xl border border-amber-400/40 shadow-sm shrink-0">
             <Image
-              src="/icon.png"
+              src={appIcon}
               alt="Prado Fleet App Icon"
               width={44}
               height={44}

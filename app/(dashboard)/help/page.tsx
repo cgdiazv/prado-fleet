@@ -177,7 +177,7 @@ export default function HelpPage() {
   };
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto pb-12">
+    <div className="space-y-8 w-full pb-12">
       {/* Header */}
       <div>
         <h1 className="flex items-center gap-2.5 text-2xl font-bold text-slate-900">

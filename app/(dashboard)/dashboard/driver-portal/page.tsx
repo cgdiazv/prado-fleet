@@ -375,7 +375,7 @@ export default function DriverPortalPage() {
   };
 
   return (
-    <div className="mx-auto max-w-xl space-y-5 pb-12">
+    <div className="w-full space-y-5 pb-12">
       {/* Mobile Driver Header */}
       <div className="rounded-3xl border border-slate-200 bg-white p-6 text-slate-900 shadow-sm space-y-4">
 
