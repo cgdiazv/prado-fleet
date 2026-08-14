@@ -8,7 +8,6 @@ import {
   CheckCircle2,
   HelpCircle,
   ShieldCheck,
-  Sparkles,
   Truck,
   Wrench,
   Zap,
@@ -108,8 +107,8 @@ export default function PricingPage() {
       <main className="flex-1">
         {/* Header Hero */}
         <section className="mx-auto max-w-6xl px-4 pt-12 pb-8 sm:px-6 md:pt-16 text-center space-y-4">
-          <p className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-amber-900">
-            <Sparkles size={14} className="text-amber-600" /> Transparent B2B Pricing
+          <p className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-amber-900">
+            Transparent B2B Pricing
           </p>
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-950 sm:text-5xl">
             Flexible plans built to scale with your fleet.

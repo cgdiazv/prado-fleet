@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
   ArrowRight,
-  BarChart3,
   Fuel,
   MapPin,
   Menu,
@@ -98,9 +97,8 @@ export function MainHeader() {
             </Link>
             <Link
               href="/signin"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-xs transition-all hover:border-slate-400 hover:bg-slate-50 hover:text-slate-900"
+              className="text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors"
             >
-              <BarChart3 size={16} className="text-slate-500" />
               Dashboard
             </Link>
             <Link
@@ -115,7 +113,7 @@ export function MainHeader() {
           <div className="flex items-center gap-2 md:hidden">
             <Link
               href="/signin"
-              className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-xs"
+              className="text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors mr-1"
             >
               Dashboard
             </Link>

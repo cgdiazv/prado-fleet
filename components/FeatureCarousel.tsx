@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type CarouselSlide = {
   id: string;
@@ -110,8 +110,7 @@ export function FeatureCarousel() {
       {/* Slide Caption & Indicators */}
       <div className="bg-white p-5 sm:p-6 text-slate-900 border-t border-slate-100 space-y-3">
         <div>
-          <h3 className="text-base sm:text-lg font-bold text-slate-950 flex items-center gap-2">
-            <Sparkles size={16} className="text-amber-500 shrink-0" />
+          <h3 className="text-base sm:text-lg font-bold text-slate-950">
             {current.title}
           </h3>
           <p className="mt-1 text-xs sm:text-sm text-slate-600 leading-relaxed">

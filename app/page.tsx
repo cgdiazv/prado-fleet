@@ -8,7 +8,6 @@ import {
   Fuel,
   MapPin,
   ShieldCheck,
-  Sparkles,
   Truck,
   Wrench,
 } from "lucide-react";
@@ -41,8 +40,7 @@ export default function LandingPage() {
           {/* Boxed Content Layer */}
           <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6">
             <div className="max-w-2xl space-y-6">
-              <p className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50/95 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-amber-800 shadow-2xs backdrop-blur-md">
-                <Sparkles size={14} className="text-amber-600 animate-pulse" />
+              <p className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50/95 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-amber-800 shadow-2xs backdrop-blur-md">
                 Fleet Operations Control Center
               </p>
               
@@ -66,7 +64,7 @@ export default function LandingPage() {
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white/90 px-7 py-4 text-base font-semibold text-slate-800 shadow-sm backdrop-blur-md transition-all hover:border-slate-400 hover:bg-white"
                 >
                   <BarChart3 size={18} className="text-slate-500" />
-                  Access Dashboard
+                  Dashboard
                 </Link>
               </div>
 
@@ -188,8 +186,8 @@ export default function LandingPage() {
           <section className="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm text-slate-950 sm:p-10">
             <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
               <div className="space-y-2 max-w-xl">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-200 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-900">
-                  <Sparkles size={13} className="text-amber-600" /> Get Started Today
+                <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-900">
+                  Get Started Today
                 </span>
                 <h2 className="text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">
                   Ready to streamline your fleet operations?

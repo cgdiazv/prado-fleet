@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Truck } from "lucide-react";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 
 type SignUpPageProps = {
@@ -27,11 +28,18 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
     <main className="flex min-h-screen items-center justify-center bg-[#f7f7f3] px-4">
       <div className="w-full max-w-md space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm shadow-slate-200/60">
         <div>
-          <Link
-            href="/"
-            className="inline-block font-sans text-xl font-bold tracking-tight text-slate-900 transition-colors hover:text-amber-600"
-          >
-            Prado Fleet
+          <Link href="/" className="group inline-flex items-center gap-3 mb-2">
+            <div className="rounded-xl bg-amber-400 p-2 text-slate-950 shadow-sm shadow-amber-200/80 transition-transform group-hover:scale-105">
+              <Truck size={22} className="text-slate-950" />
+            </div>
+            <div>
+              <span className="font-sans text-xl font-bold leading-none tracking-tight text-slate-950">
+                Prado Fleet
+              </span>
+              <p className="mt-0.5 text-[10px] font-medium uppercase tracking-widest text-slate-500">
+                Asset Intelligence
+              </p>
+            </div>
           </Link>
           <h1 className="mt-1 text-2xl font-semibold text-slate-900">Create account</h1>
           <p className="mt-1 text-sm text-slate-600">Set up access for your fleet operations workspace.</p>

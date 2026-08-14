@@ -24,8 +24,8 @@ export default function TermsPage() {
 
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10 space-y-8">
           <div className="border-b border-slate-100 pb-6">
-            <div className="inline-flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-900 mb-3">
-              <ShieldCheck size={14} className="text-amber-600" /> Platform Agreement
+            <div className="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-900 mb-3">
+              Platform Agreement
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">
               Terms of Service
