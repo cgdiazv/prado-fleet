@@ -51,7 +51,7 @@ export default function PricingPage() {
         "Everything in Starter, plus:",
         "Real-time GPS & driver route tracking (Mapbox overlays)",
         "Geofence arrival/departure alerts synced to Prado Jobs",
-        "Plug-and-play OBD-II engine fault code monitoring",
+        "Automated Engine Fault & DVIR Defect Escalation",
         "Driver Safety Scoring (speed, harsh braking, idling)",
         "Fuel card sync (WEX/Fleetcor) & cost-per-mile analytics",
         "Prado Commerce Bridge: Auto-trigger replacement parts",
@@ -92,11 +92,11 @@ export default function PricingPage() {
     },
     {
       q: "What is the Prado Commerce Bridge?",
-      a: "When a driver logs a failed DVIR item or an OBD-II engine fault is detected, Prado Fleet automatically matches the vehicle model and recommends replacement parts directly through Prado Commerce.",
+      a: "When a driver logs a failed DVIR inspection or engine fault light, Prado Fleet automatically matches the vehicle model and recommends replacement parts directly through Prado Commerce.",
     },
     {
       q: "Do I need special hardware to get started?",
-      a: "No hardware is needed for Starter mobile DVIR logging. For Pro & Enterprise live GPS and engine diagnostics, we support standard plug-and-play OBD-II telematics dongles.",
+      a: "No hardware required! Drivers stream live GPS telematics, record fuel logs, and submit digital DVIR inspections directly from their existing smartphones.",
     },
   ];
 
@@ -219,7 +219,7 @@ export default function PricingPage() {
                 <div>
                   <h4 className="text-sm font-bold text-slate-950">Zero Hardware Lock-In</h4>
                   <p className="mt-1 text-xs text-slate-600 leading-relaxed">
-                    Use your drivers&apos; existing smartphones for DVIR checklists or plug in standard OBD-II telematics dongles.
+                    Use your drivers&apos; existing smartphones for live GPS route streaming, mobile DVIR checklists, and fuel logs with zero hardware setup required.
                   </p>
                 </div>
               </div>

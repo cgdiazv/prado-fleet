@@ -5,16 +5,26 @@ import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
   BellRing,
+  Briefcase,
+  Check,
   CheckCircle2,
+  Copy,
+  Globe,
   Key,
+  Layers,
   Lock,
   MessageSquare,
+  Radio,
   Settings2,
+  Share2,
   ShieldAlert,
   ShieldCheck,
+  ShoppingBag,
+  ShoppingCart,
   Trash2,
   UserRound,
   X,
+  Zap,
 } from "lucide-react";
 
 const SURVEY_OPTIONS = [
@@ -30,10 +40,25 @@ export default function SettingsPage() {
   const router = useRouter();
 
   // Settings State
-  const [activeTab, setActiveTab] = useState<"general" | "notifications" | "security" | "danger">("general");
+  const [activeTab, setActiveTab] = useState<"general" | "notifications" | "integrations" | "security" | "danger">("general");
   const [companyName, setCompanyName] = useState("Prado Logistics Corp");
   const [timezone, setTimezone] = useState("America/Chicago (CST)");
   const [savedNotice, setSavedNotice] = useState(false);
+
+  // Ecosystem Integrations State
+  const [pradoJobsSync, setPradoJobsSync] = useState(true);
+  const [pradoCommerceBridge, setPradoCommerceBridge] = useState(true);
+  const [geofenceAutoCheckIn, setGeofenceAutoCheckIn] = useState(true);
+  const [webhookApiKey, setWebhookApiKey] = useState("prado_live_wk_89f2a71c4b8e90");
+  const [copiedKey, setCopiedKey] = useState(false);
+
+  const handleCopyKey = () => {
+    if (typeof navigator !== "undefined") {
+      navigator.clipboard.writeText(webhookApiKey);
+      setCopiedKey(true);
+      setTimeout(() => setCopiedKey(false), 2500);
+    }
+  };
 
   // Deletion Modal State
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -240,6 +265,17 @@ export default function SettingsPage() {
           }`}
         >
           <BellRing size={16} /> Alerts & Notifications
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("integrations")}
+          className={`flex items-center gap-2 border-b-2 py-3 px-1 transition-colors whitespace-nowrap ${
+            activeTab === "integrations"
+              ? "border-amber-400 font-bold text-slate-950"
+              : "border-transparent text-slate-500 hover:text-slate-900"
+          }`}
+        >
+          <Share2 size={16} /> Ecosystem Integrations
         </button>
         <button
           type="button"
@@ -512,6 +548,167 @@ export default function SettingsPage() {
                   </div>
                 </div>
                 <span className="text-[10px] font-mono text-slate-400">System Active</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 3: Ecosystem & Telematics Integrations */}
+      {activeTab === "integrations" && (
+        <div className="space-y-6">
+          {/* Section 1: Prado Jobs Sync */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-5">
+            <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="rounded-xl bg-[#0e9f6e] p-2.5 text-white shadow-sm shadow-emerald-200 shrink-0">
+                  <Layers size={20} className="text-white" />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold text-slate-950 flex items-center gap-2">
+                    Prado Jobs Dispatch Sync
+                    <span className="rounded-full bg-emerald-100 border border-emerald-200 px-2 py-0.5 text-[10px] font-extrabold uppercase text-emerald-800">
+                      Connected
+                    </span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Automatically sync vehicle locations, driver shift statuses, and geofence arrival/departure logs to Prado Jobs.
+                  </p>
+                </div>
+              </div>
+
+              {/* Toggle Switch */}
+              <button
+                type="button"
+                onClick={() => setPradoJobsSync(!pradoJobsSync)}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  pradoJobsSync ? "bg-amber-400" : "bg-slate-300"
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block size-5 transform rounded-full bg-slate-950 shadow-xs ring-0 transition duration-200 ease-in-out ${
+                    pradoJobsSync ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Sub-options for Prado Jobs */}
+            <div className="grid gap-4 sm:grid-cols-2 text-xs pt-1">
+              <label className="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 cursor-pointer transition-colors hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={geofenceAutoCheckIn}
+                  onChange={(e) => setGeofenceAutoCheckIn(e.target.checked)}
+                  disabled={!pradoJobsSync}
+                  className="mt-0.5 size-4 accent-amber-500"
+                />
+                <div>
+                  <span className="font-bold text-slate-900 block">Geofence Auto Check-In</span>
+                  <span className="text-[11px] text-slate-500 leading-relaxed block mt-0.5">
+                    Automatically update job status to &quot;On Site&quot; when a driver enters jobsite coordinates, and log departure time on exit.
+                  </span>
+                </div>
+              </label>
+
+              <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
+                <span className="font-bold text-slate-900 block flex items-center gap-1.5">
+                  <Globe size={14} className="text-amber-600" />
+                  Synced Ecosystem Workspace
+                </span>
+                <span className="text-[11px] text-slate-500 leading-relaxed block mt-0.5">
+                  Connected to organization account <strong className="text-slate-800">Prado Logistics Corp</strong> (ID: org_prado_df92a).
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 2: Prado Commerce Bridge */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-4">
+            <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="rounded-xl bg-[#00b4d8] p-2.5 text-white shadow-sm shadow-cyan-200 shrink-0">
+                  <ShoppingBag size={20} className="text-white" />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold text-slate-950 flex items-center gap-2">
+                    Prado Commerce Parts Bridge
+                    <span className="rounded-full bg-emerald-100 border border-emerald-200 px-2 py-0.5 text-[10px] font-extrabold uppercase text-emerald-800">
+                      Active
+                    </span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Match failed DVIR inspection items and engine diagnostic codes to replacement parts for 1-click order fulfillment.
+                  </p>
+                </div>
+              </div>
+
+              {/* Toggle Switch */}
+              <button
+                type="button"
+                onClick={() => setPradoCommerceBridge(!pradoCommerceBridge)}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  pradoCommerceBridge ? "bg-amber-400" : "bg-slate-300"
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block size-5 transform rounded-full bg-slate-950 shadow-xs ring-0 transition duration-200 ease-in-out ${
+                    pradoCommerceBridge ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-600 leading-relaxed">
+              When a driver submits a failed DVIR checklist (e.g. low tire pressure, worn brake pads, or check engine light), Prado Fleet queries Prado Commerce inventory for matching vehicle parts and queues an instant work order.
+            </p>
+          </div>
+
+          {/* Section 3: Telematics Webhook & API Key */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-4">
+            <h2 className="text-base font-bold text-slate-950 flex items-center gap-2">
+              <Radio size={18} className="text-amber-500" /> External Telematics & Dongle Webhooks
+            </h2>
+            <p className="text-xs text-slate-500">
+              Use this endpoint and secret key to ingest telematics data from external OBD-II dongles or third-party GPS providers into Prado Fleet.
+            </p>
+
+            <div className="grid gap-4 sm:grid-cols-2 text-xs">
+              <div>
+                <label className="mb-1 block font-semibold text-slate-700">Webhook Endpoint URL</label>
+                <input
+                  type="text"
+                  readOnly
+                  value="https://prado-fleet.app/api/webhooks/telematics"
+                  className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 font-mono text-slate-800 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block font-semibold text-slate-700">Secret Webhook Key</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    readOnly
+                    value={webhookApiKey}
+                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 font-mono font-bold text-slate-900 outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleCopyKey}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 font-bold text-slate-800 hover:bg-slate-100 transition-colors shrink-0"
+                  >
+                    {copiedKey ? (
+                      <>
+                        <Check size={14} className="text-emerald-600" /> Copied
+                      </>
+                    ) : (
+                      <>
+                        <Copy size={14} className="text-slate-500" /> Copy
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
